@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  SISWA
+  CALON_WARGA
+  WARGA
+}
+
+model User {
+  id String @id @default(uuid())
+
+  name              String
+  username          String @unique
+  encryptedPassword String @map("encrypted_password") @db.Char(60)
+
+  branchId  Int        @map("branch_id")
+  subBranch String?    @map("sub_branch")
+  roles     UserRole[] @default([])
+
+  email                  String?   @unique
+  emailConfirmationToken String?   @map("email_confirmation_token") @db.Char(6)
+  emailConfirmedAt       DateTime? @map("email_confirmed_at")
+
+  phone                  String?   @unique
+  phoneConfirmationToken String?   @map("phone_confirmation_token") @db.Char(6)
+  phoneConfirmedAt       DateTime? @map("phone_confirmed_at")
+
+  branch Branch @relation(fields: [branchId], references: [id])
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+}
+
+model Branch {
+  id   Int    @id
+  name String
+
+  users User[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+}
