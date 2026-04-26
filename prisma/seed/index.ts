@@ -4,7 +4,7 @@ import "dotenv/config";
 import pg from "pg";
 import branch from "./branch.json";
 
-const pool = new pg.Pool({ connectionString: process.env.POSTGRES_PRISMA_URL });
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 

@@ -8,6 +8,6 @@ export default defineConfig({
     seed: "tsx prisma/seed/index.ts",
   },
   datasource: {
-    url: process.env.POSTGRES_URL_NON_POOLING,
+    url: process.env.DATABASE_URL_NON_POOLING,
   },
 });
