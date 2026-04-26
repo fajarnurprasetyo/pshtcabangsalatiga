@@ -1,7 +1,7 @@
 "use client";
 
 import { UserRole, type Branch } from "@/generated/prisma/browser";
-import { UsernameSchema } from "@/shared/schemas/user";
+import { UsernameSchema } from "@/libs/shared/schemas/user";
 import {
   Combobox,
   ComboboxInput,
@@ -21,7 +21,8 @@ import {
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
-import { useDebounce, useToggle } from "react-use";
+import { useBoolean, useDebounce, useToggle } from "react-use";
+import { ZodError } from "zod";
 import { checkUsername, findBranch, register } from "./actions";
 
 function generateUsername(name: string) {
@@ -55,14 +56,13 @@ function generateUsername(name: string) {
 
 export default function RegisterPage() {
   const [username, setUsername] = React.useState("");
-  const [usernameUserChanged, setUsernameUserChanged] = React.useState(false);
-  const [usernameChecking, setUsernameChecking] = React.useState(false);
+  const [usernameUserChanged, setUsernameUserChanged] = useBoolean(false);
+  const [usernameChecking, setUsernameChecking] = useBoolean(false);
 
   const usernameValid =
     !usernameUserChanged || UsernameSchema.safeParse(username).success;
-  const [usernameAvailable, setUsernameAvailable] = React.useState(true);
+  const [usernameAvailable, setUsernameAvailable] = useBoolean(true);
 
-  const usernameColor = usernameValid && usernameAvailable ? "gray" : "failure";
   const usernameHelperText = !usernameValid
     ? "Nama pengguna tidak valid!"
     : !usernameAvailable
@@ -94,7 +94,7 @@ export default function RegisterPage() {
   const [branchOptions, setBranchOptions] = React.useState<
     Awaited<ReturnType<typeof findBranch>>
   >([]);
-  const [branchOptionsLoading, setBranchOptionsLoading] = React.useState(false);
+  const [branchOptionsLoading, setBranchOptionsLoading] = useBoolean(false);
 
   useDebounce(
     async () => {
@@ -121,25 +121,24 @@ export default function RegisterPage() {
   const [role, setRole] = React.useState<UserRole>(UserRole.SISWA);
 
   const [password, setPassword] = React.useState("");
-  // const score = getPasswordStrength(password);
-
   const [showPassword] = useToggle(false);
 
-  const handleRegister = async (_: void, formData: FormData) => {
-    const { error, data } = await register(
-      Object.fromEntries(formData.entries()),
-    );
+  const handleRegister = async (
+    _lastError: ZodError | unknown | null,
+    formData: FormData,
+  ) => {
+    const payload = Object.fromEntries(formData.entries());
+    const { error, data } = await register(payload);
 
-    if (data) {
-      const res = await signIn("credentials", { ...data, callbackUrl: "/" });
-      console.debug(res);
-      return;
-    }
+    if (error) return error;
 
-    console.error(error);
+    await signIn("credentials", { ...data, callbackUrl: "/" });
+    return null;
   };
 
-  const [, submit, isPending] = React.useActionState(handleRegister, undefined);
+  const [error, submit, isPending] = React.useActionState(handleRegister, null);
+
+  const passwordError = error instanceof ZodError;
 
   return (
     <div className="flex justify-center">
@@ -178,8 +177,8 @@ export default function RegisterPage() {
           <div>
             <Label
               htmlFor="input-username"
+              color={usernameValid && usernameAvailable ? "default" : "failure"}
               className="block mb-2"
-              color={usernameColor}
             >
               Nama Pengguna
             </Label>
@@ -190,7 +189,7 @@ export default function RegisterPage() {
                 name="username"
                 type="text"
                 placeholder="johndoe"
-                color={usernameColor}
+                color={usernameValid && usernameAvailable ? "gray" : "failure"}
                 value={username}
                 onChange={({ target }) => {
                   setUsername(target.value);
@@ -312,7 +311,7 @@ export default function RegisterPage() {
                 <Button
                   key={item.role}
                   size="sm"
-                  className="flex-1 focus:ring-0 cursor-pointer"
+                  className="flex-1 focus:ring-0"
                   onClick={() => setRole(item.role)}
                   color={item.role === role ? "default" : "alternative"}
                 >
@@ -324,7 +323,11 @@ export default function RegisterPage() {
 
           {/* Password */}
           <div>
-            <Label htmlFor="input-password" className="block mb-2">
+            <Label
+              htmlFor="input-password"
+              color={passwordError ? "failure" : "default"}
+              className="block mb-2"
+            >
               Kata Sandi
             </Label>
             <TextInput
@@ -333,16 +336,16 @@ export default function RegisterPage() {
               autoComplete="off"
               type={showPassword ? "text" : "password"}
               name="password"
+              color={passwordError ? "failure" : "gray"}
               value={password}
               onChange={({ target }) => setPassword(target.value)}
             />
+            {passwordError && (
+              <HelperText>Kata sandi minimal 8 karakter</HelperText>
+            )}
           </div>
 
-          <Button
-            type="submit"
-            disabled={isPending}
-            className="mt-3 cursor-pointer"
-          >
+          <Button type="submit" className="mt-3" disabled={isPending}>
             Daftar
           </Button>
         </form>

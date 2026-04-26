@@ -1,5 +1,5 @@
-import "dotenv/config";
 import { defineConfig } from "prisma/config";
+import ServerEnv from "./src/libs/env-server";
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -8,6 +8,6 @@ export default defineConfig({
     seed: "tsx prisma/seed/index.ts",
   },
   datasource: {
-    url: process.env.DATABASE_URL_NON_POOLING,
+    url: ServerEnv.DATABASE_URL_NON_POOLING,
   },
 });

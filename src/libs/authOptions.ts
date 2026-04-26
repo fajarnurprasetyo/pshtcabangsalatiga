@@ -1,8 +1,8 @@
-import { InvalidCredentials, UserNotFound } from "@/shared/auth-error";
+import { InvalidCredentials, UserNotFound } from "@/libs/shared/auth-error";
 import bcrypt from "bcrypt";
 import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { prisma } from "./prisma";
+import prisma from "./prisma";
 
 const authOptions: NextAuthOptions = {
   pages: {

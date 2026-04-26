@@ -1,7 +1,7 @@
 "use server";
 
-import { prisma } from "@/libs/prisma";
-import { UsernameSchema, UserRegisterSchema } from "@/shared/schemas/user";
+import prisma from "@/libs/prisma";
+import { UsernameSchema, UserRegisterSchema } from "@/libs/shared/schemas/user";
 import bcrypt from "bcrypt";
 import type { ZodError } from "zod";
 
@@ -50,14 +50,14 @@ export async function findBranch(query: string) {
   });
 }
 
-export async function register(data: Record<string, unknown>): Promise<
+export async function register(payload: Record<string, unknown>): Promise<
   | {
       error: null;
       data: { username: string; password: string };
     }
   | { error: ZodError | unknown; data: null }
 > {
-  const parsed = UserRegisterSchema.safeParse(data);
+  const parsed = UserRegisterSchema.safeParse(payload);
 
   if (!parsed.success) return { error: parsed.error, data: null };
 

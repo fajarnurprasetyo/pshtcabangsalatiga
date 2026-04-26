@@ -1,4 +1,6 @@
 import NextAuthSessionProvider from "@/components/providers/NextAuthSessionProvider";
+import theme from "@/libs/theme";
+import { ThemeProvider } from "flowbite-react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -22,13 +24,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="id"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
-      </body>
-    </html>
+    <ThemeProvider theme={theme}>
+      <NextAuthSessionProvider>
+        <html
+          lang="id"
+          className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+        >
+          <body className="min-h-full flex flex-col">{children}</body>
+        </html>
+      </NextAuthSessionProvider>
+    </ThemeProvider>
   );
 }

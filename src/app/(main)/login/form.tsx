@@ -60,11 +60,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
             />
           </div>
 
-          <Button
-            type="submit"
-            className="mt-3 cursor-pointer"
-            disabled={isPending}
-          >
+          <Button type="submit" className="mt-3" disabled={isPending}>
             Masuk
           </Button>
         </form>
