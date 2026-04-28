@@ -3,7 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
 import Env from "./env";
 
-const pool = new pg.Pool({ connectionString: Env.DATABASE_URL_UNPOOLED });
+const pool = new pg.Pool({ connectionString: Env.DATABASE_URL });
 
 const adapter = new PrismaPg(pool);
 

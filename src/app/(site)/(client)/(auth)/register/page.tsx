@@ -130,6 +130,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     const payload = Object.fromEntries(formData.entries());
+    console.log(payload);
     const { data } = await register(payload);
 
     if (data) {
@@ -149,35 +150,37 @@ export default function RegisterPage() {
 
         <HR />
 
-        {/* Full Name */}
-        <div>
-          <Label htmlFor="input-name" className="block mb-2">
-            Nama Lengkap
-          </Label>
-          <TextInput
-            required
-            id="input-name"
-            name="name"
-            autoComplete="off"
-            type="text"
-            placeholder="John Doe"
-            value={name}
-            onChange={({ target }) => {
-              setName(target.value);
-              if (!usernameUserChanged) {
-                const username = generateUsername(target.value);
-                setUsername(username);
-                setUsernameChecking(UsernameSchema.safeParse(username).success);
-              }
-            }}
-          />
-        </div>
-
         <form
           action={submit}
           autoComplete="off"
           className="flex flex-col gap-4"
         >
+          {/* Full Name */}
+          <div>
+            <Label htmlFor="input-name" className="block mb-2">
+              Nama Lengkap
+            </Label>
+            <TextInput
+              required
+              id="input-name"
+              name="name"
+              autoComplete="off"
+              type="text"
+              placeholder="John Doe"
+              value={name}
+              onChange={({ target }) => {
+                setName(target.value);
+                if (!usernameUserChanged) {
+                  const username = generateUsername(target.value);
+                  setUsername(username);
+                  setUsernameChecking(
+                    UsernameSchema.safeParse(username).success,
+                  );
+                }
+              }}
+            />
+          </div>
+
           {/* Username */}
           <div>
             <Label
@@ -268,6 +271,7 @@ export default function RegisterPage() {
                   placeholder="Salatiga"
                   displayValue={(branch: Branch | null) => branch?.name || ""}
                   onChange={({ target }) => {
+                    setBranch(null);
                     setBranchQuery(target.value);
                     setBranchOptionsLoading(true);
                   }}
@@ -357,15 +361,16 @@ export default function RegisterPage() {
             type="submit"
             className="mt-3"
             disabled={
+              name.length < 3 ||
               !username ||
               !usernameValid ||
               !usernameAvailable ||
               password.length < 8 ||
-              name.length < 3 ||
+              !branch ||
               loading
             }
           >
-            Daftar
+            {loading ? <FaSpinner className="animate-spin" /> : "Daftar"}
           </Button>
         </form>
 

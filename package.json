@@ -12,7 +12,7 @@
     "dev": "next --turbo",
     "prebuild": "npm run typegen",
     "build": "prisma migrate deploy && next build",
-    "prestart": "npm run db:seed",
+    "postbuild": "npm run db:seed",
     "start": "next start"
   },
   "dependencies": {

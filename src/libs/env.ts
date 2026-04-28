@@ -9,7 +9,7 @@ const EnvSchema = z.object({
   NEXTAUTH_URL: z.url(),
   NEXTAUTH_SECRET: z.string(),
 
-  DATABASE_URL_UNPOOLED: z.string().nonempty(),
+  DATABASE_URL: z.string().nonempty(),
 });
 
 const Env = EnvSchema.parse(process.env);
