@@ -1,9 +1,14 @@
-import type { NextConfig } from "next";
 import withFlowbiteReact from "flowbite-react/plugin/nextjs";
 
-const nextConfig: NextConfig = {
-  /* config options here */
+export default withFlowbiteReact({
   reactCompiler: true,
-};
-
-export default withFlowbiteReact(nextConfig);
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+        pathname: "/images/**",
+      },
+    ],
+  },
+});

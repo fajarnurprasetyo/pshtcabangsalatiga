@@ -6,8 +6,8 @@ export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
     // Documents
     // author,
+    // post
     certificate,
     event,
-    // post
   ],
 };

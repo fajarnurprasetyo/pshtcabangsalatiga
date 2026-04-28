@@ -17,4 +17,9 @@ export const projectId = assertValue(
  * see https://www.sanity.io/docs/api-versioning for how versioning works
  */
 export const apiVersion =
-  process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-02-28";
+  process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2025-02-19";
+
+export const googleMapsApiKey = assertValue(
+  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+  "Missing environment variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY",
+);

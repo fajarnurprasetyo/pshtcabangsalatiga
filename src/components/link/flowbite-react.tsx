@@ -6,7 +6,7 @@ import {
   NavbarBrand,
   type ButtonProps,
   type NavbarBrandProps,
-  type NavbarLinkProps
+  type NavbarLinkProps,
 } from "flowbite-react";
 import Link from "next/link";
 import type { RefAttributes } from "react";
@@ -18,9 +18,9 @@ export function NavbarBrandLink(props: NavbarBrandProps) {
 export function NavbarLink(
   props: NavbarLinkProps & RefAttributes<HTMLLIElement>,
 ) {
-  return <FlowbiteNavbarLink as={Link} {...props} />;
+  return <FlowbiteNavbarLink as={props.href ? Link : undefined} {...props} />;
 }
 
 export function LinkButton(props: ButtonProps) {
-  return <Button as={Link} {...props} />;
+  return <Button as={props.href ? Link : undefined} {...props} />;
 }
