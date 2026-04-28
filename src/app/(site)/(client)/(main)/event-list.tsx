@@ -4,7 +4,7 @@ import { urlFor } from "@/libs/sanity/image";
 import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { use } from "react";
 import { FaClock, FaThumbsUp, FaUser } from "react-icons/fa6";
 import type { Data } from "./actions";
 
@@ -13,7 +13,7 @@ export interface EventListProps {
 }
 
 export default function EventList(props: EventListProps) {
-  const events = React.use(props.data);
+  const events = use(props.data);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -22,9 +22,9 @@ export default function EventList(props: EventListProps) {
           <div className="relative rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800 text-shadow-lg aspect-video overflow-hidden">
             <Image
               alt={event.title!}
-              src={urlFor(event.thumbnail!).url()}
-              width={1920}
-              height={1080}
+              src={urlFor(event.thumbnail!).size(640, 360).url()}
+              width={640}
+              height={360}
             />
             <div className="absolute w-full flex top-0 bg-gradient-to-b from-black/80 to-black/0 px-3 pb-3 pt-1">
               <h5 className="text-lg">{event.title}</h5>

@@ -18,7 +18,7 @@ import {
 } from "flowbite-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import React from "react";
+import { useRef, useState } from "react";
 import { FaCheck, FaSpinner, FaXmark } from "react-icons/fa6";
 import { useBoolean, useDebounce, useToggle } from "react-use";
 import { checkUsername, findBranch, register } from "./actions";
@@ -53,7 +53,7 @@ function generateUsername(name: string) {
 // }
 
 export default function RegisterPage() {
-  const [username, setUsername] = React.useState("");
+  const [username, setUsername] = useState("");
   const [usernameUserChanged, setUsernameUserChanged] = useBoolean(false);
   const [usernameChecking, setUsernameChecking] = useBoolean(false);
 
@@ -67,7 +67,7 @@ export default function RegisterPage() {
       ? "Nama pengguna tidak tersedia!"
       : null;
 
-  const usernameCheckRef = React.useRef(0);
+  const usernameCheckRef = useRef(0);
   useDebounce(
     async () => {
       if (!username || !usernameValid) {
@@ -86,16 +86,16 @@ export default function RegisterPage() {
     [usernameValid, username],
   );
 
-  const [password, setPassword] = React.useState("");
+  const [password, setPassword] = useState("");
   const [passwordError] = useToggle(false);
   const [showPassword] = useToggle(false);
 
-  const [name, setName] = React.useState("");
+  const [name, setName] = useState("");
 
-  const [branch, setBranch] = React.useState<Branch | null>(null);
-  const [branchQuery, setBranchQuery] = React.useState("");
-  const branchQueryRef = React.useRef(0);
-  const [branchOptions, setBranchOptions] = React.useState<
+  const [branch, setBranch] = useState<Branch | null>(null);
+  const [branchQuery, setBranchQuery] = useState("");
+  const branchQueryRef = useRef(0);
+  const [branchOptions, setBranchOptions] = useState<
     Awaited<ReturnType<typeof findBranch>>
   >([]);
   const [branchOptionsLoading, setBranchOptionsLoading] = useBoolean(false);
@@ -122,7 +122,7 @@ export default function RegisterPage() {
     [branchQuery],
   );
 
-  const [role, setRole] = React.useState<UserRole>(UserRole.SISWA);
+  const [role, setRole] = useState<UserRole>(UserRole.SISWA);
 
   const [loading, setLoading] = useBoolean(false);
 
@@ -148,6 +148,30 @@ export default function RegisterPage() {
         </h1>
 
         <HR />
+
+        {/* Full Name */}
+        <div>
+          <Label htmlFor="input-name" className="block mb-2">
+            Nama Lengkap
+          </Label>
+          <TextInput
+            required
+            id="input-name"
+            name="name"
+            autoComplete="off"
+            type="text"
+            placeholder="John Doe"
+            value={name}
+            onChange={({ target }) => {
+              setName(target.value);
+              if (!usernameUserChanged) {
+                const username = generateUsername(target.value);
+                setUsername(username);
+                setUsernameChecking(UsernameSchema.safeParse(username).success);
+              }
+            }}
+          />
+        </div>
 
         <form
           action={submit}
@@ -218,32 +242,6 @@ export default function RegisterPage() {
             {passwordError && (
               <HelperText>Kata sandi minimal 8 karakter</HelperText>
             )}
-          </div>
-
-          {/* Full Name */}
-          <div>
-            <Label htmlFor="input-name" className="block mb-2">
-              Nama Lengkap
-            </Label>
-            <TextInput
-              required
-              id="input-name"
-              name="name"
-              autoComplete="off"
-              type="text"
-              placeholder="John Doe"
-              value={name}
-              onChange={({ target }) => {
-                setName(target.value);
-                if (!usernameUserChanged) {
-                  const username = generateUsername(target.value);
-                  setUsername(username);
-                  setUsernameChecking(
-                    UsernameSchema.safeParse(username).success,
-                  );
-                }
-              }}
-            />
           </div>
 
           {/* Branch */}
@@ -386,7 +384,7 @@ export default function RegisterPage() {
           Sudah punya akun?&nbsp;
           <Link
             href="/login"
-            className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           >
             Masuk
           </Link>

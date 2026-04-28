@@ -1,10 +1,15 @@
 import { NavbarBrandLink, NavbarLink } from "@/components/link";
+import { UserRole } from "@/generated/prisma/enums";
+import { authOptions } from "@/libs/next-auth";
 import { Navbar, NavbarCollapse, NavbarToggle } from "flowbite-react";
+import { getServerSession } from "next-auth";
 import { type PropsWithChildren } from "react";
 import Footer from "./footer";
 import { NavbarUserAvatar, NavbarUserListItem } from "./header";
 
 export default async function MainLayout({ children }: PropsWithChildren) {
+  const session = await getServerSession(authOptions);
+
   return (
     <>
       <Navbar fluid className="sticky top-0 w-full z-50">
@@ -16,12 +21,15 @@ export default async function MainLayout({ children }: PropsWithChildren) {
 
         <div className="flex md:order-2">
           <div className="hidden md:block">
-            <NavbarUserAvatar />
+            <NavbarUserAvatar session={session} />
           </div>
           <NavbarToggle />
         </div>
 
         <NavbarCollapse>
+          {session?.user.roles.includes(UserRole.ADMIN) && (
+            <NavbarLink href="/admin">Admin Panel</NavbarLink>
+          )}
           <NavbarLink href="#" active>
             Beranda
           </NavbarLink>
@@ -30,7 +38,7 @@ export default async function MainLayout({ children }: PropsWithChildren) {
           <NavbarLink href="#">Kompetisi</NavbarLink>
           <NavbarLink href="#">Tentang Kami</NavbarLink>
           <div className="visible md:hidden">
-            <NavbarUserListItem />
+            <NavbarUserListItem session={session} />
           </div>
         </NavbarCollapse>
       </Navbar>

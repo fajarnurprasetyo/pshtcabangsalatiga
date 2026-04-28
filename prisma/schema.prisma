@@ -26,7 +26,7 @@ model User {
   username          String @unique
   encryptedPassword String @map("encrypted_password") @db.Char(60)
 
-  branchId  Int        @map("branch_id")
+  branchId  Int?       @map("branch_id")
   subBranch String?    @map("sub_branch")
   roles     UserRole[] @default([])
 
@@ -38,7 +38,7 @@ model User {
   phoneConfirmationToken String?   @map("phone_confirmation_token") @db.Char(6)
   phoneConfirmedAt       DateTime? @map("phone_confirmed_at")
 
-  branch       Branch        @relation(fields: [branchId], references: [id])
+  branch       Branch?       @relation(fields: [branchId], references: [id])
   likes        Like[]
   particiption Participant[]
 

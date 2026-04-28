@@ -4,7 +4,7 @@ import { Button, HR, Label, TextInput } from "flowbite-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
+import { use, useActionState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 
 export interface LoginPageProps {
@@ -12,7 +12,7 @@ export interface LoginPageProps {
 }
 
 export default function LoginPage(props: LoginPageProps) {
-  const { callbackUrl } = React.use(props.searchParams);
+  const { callbackUrl } = use(props.searchParams);
 
   const handleSignin = async (_: void, formData: FormData) => {
     const res = await signIn("credentials", {
@@ -24,7 +24,7 @@ export default function LoginPage(props: LoginPageProps) {
     if (res) redirect(callbackUrl ?? "/");
   };
 
-  const [, submit, isPending] = React.useActionState(handleSignin, undefined);
+  const [, submit, isPending] = useActionState(handleSignin, undefined);
 
   return (
     <div className="flex justify-center">
@@ -86,7 +86,7 @@ export default function LoginPage(props: LoginPageProps) {
           Belum punya akun?&nbsp;
           <Link
             href="/register"
-            className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           >
             Daftar sekarang
           </Link>

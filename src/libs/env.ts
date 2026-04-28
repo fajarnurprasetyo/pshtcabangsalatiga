@@ -6,12 +6,10 @@ const EnvSchema = z.object({
     .literal(["development", "preview", "production"])
     .default("development"),
 
-  DATABASE_URL: z.string().nonempty(),
-
   NEXTAUTH_URL: z.url(),
   NEXTAUTH_SECRET: z.string(),
 
-  SANITY_API_WRITE_TOKEN: z.string().nonempty(),
+  DATABASE_URL_UNPOOLED: z.string().nonempty(),
 });
 
 const Env = EnvSchema.parse(process.env);

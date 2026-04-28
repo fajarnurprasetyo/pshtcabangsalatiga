@@ -5,9 +5,8 @@ import { authOptions } from "@/libs/next-auth";
 import prisma from "@/libs/prisma";
 import { fetchEvent } from "@/libs/sanity/queries/event";
 import { getServerSession } from "next-auth";
-import { revalidatePath } from "next/cache";
 
-export async function fetchData(slug: string) {
+export async function getEvent(slug: string) {
   const data = await fetchEvent(slug);
   if (!data) return null;
 
@@ -42,7 +41,6 @@ export async function updateLikeEvent(targetId: Event["_id"], like: boolean) {
           where: { userId_targetId: { userId, targetId } },
         });
       }
-      revalidatePath("/");
       return like;
     } catch (error) {
       console.error(error);
@@ -61,7 +59,6 @@ export async function joinEvent(targetId: Event["_id"]) {
     await prisma.participant.create({
       data: { userId, targetId },
     });
-    revalidatePath("/");
     return true;
   } catch (error) {
     console.error(error);

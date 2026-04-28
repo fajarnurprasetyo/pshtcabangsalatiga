@@ -13,8 +13,7 @@ export const EventsQuery = groq`
   && defined(slug.current)
   && (!defined($type) || type == $type)
 ]
-| order(date desc)
-[$start...$end]
+|order(date desc)[$start...$end]
 {
   _id,
   type,
@@ -56,6 +55,12 @@ export async function fetchEvents<
 >(options?: FetchEventsOptions) {
   const params = FetchEventsParamsSchema.parse(options);
   return await sanity.fetch<R>(EventsQuery, params);
+}
+
+export const EventNameQuery = groq`*[_type == "event" && slug.current == $slug][0].title`;
+
+export async function fetchEventName(slug: string) {
+  return await sanity.fetch<string>(EventNameQuery, { slug });
 }
 
 export const EventQuery = groq`

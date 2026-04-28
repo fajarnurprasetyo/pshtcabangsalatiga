@@ -3,18 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "npm run typegen",
+    "db:seed": "prisma db seed",
+    "typegen:prisma": "prisma generate",
+    "typegen:sanity": "sanity schema extract && sanity typegen generate",
+    "typegen": "npm run typegen:prisma && npm run typegen:sanity",
+    "lint": "eslint .",
+    "predev": "npm run typegen && npm run db:seed",
     "dev": "next --turbo",
     "prebuild": "npm run typegen",
     "build": "prisma migrate deploy && next build",
-    "start": "next start",
-    "lint": "eslint .",
-    "presetup": "echo 'about to setup env variables, follow the guide here: https://github.com/vercel/next.js/tree/canary/examples/cms-sanity#using-the-sanity-cli'",
-    "setup": "npx sanity@latest init --env .env.local",
-    "postsetup": "echo 'create the read token by following the rest of the guide: https://github.com/vercel/next.js/tree/canary/examples/cms-sanity#creating-a-read-token'",
-    "typegen:prisma": "prisma generate",
-    "typegen:sanity": "sanity schema extract && sanity typegen generate",
-    "typegen": "npm run typegen:prisma && npm run typegen:sanity"
+    "prestart": "npm run db:seed",
+    "start": "next start"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",

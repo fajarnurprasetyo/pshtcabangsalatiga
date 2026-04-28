@@ -1,10 +1,10 @@
 import { authOptions } from "@/libs/next-auth";
-import client from "@/libs/sanity/queries/client";
+import { fetchEventName } from "@/libs/sanity/queries/event";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
-import React, { Suspense } from "react";
-import { fetchData } from "./actions";
-import SeminarView from "./event-view";
+import { notFound } from "next/navigation";
+import { getEvent } from "./actions";
+import EventView from "./event-view";
 
 export interface SeminarPageProps {
   params: Promise<{ slug: string }>;
@@ -15,25 +15,18 @@ export async function generateMetadata(
   // parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const { slug } = await params;
-  const event = await client.fetch(
-    `*[_type == "event" && slug.current == "${slug}"][0]{title}`,
-  );
-
-  return {
-    title: event?.title,
-    // description: event?.description,
-  };
+  const title = await fetchEventName(slug);
+  return { title };
 }
-export default function SeminarPage(props: SeminarPageProps) {
-  const session = getServerSession(authOptions);
-  const { slug } = React.use(props.params);
-  const data = fetchData(slug);
+export default async function SeminarPage(props: SeminarPageProps) {
+  const event = await getEvent((await props.params).slug);
+  if (!event) notFound();
+
+  const session = await getServerSession(authOptions);
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
-      <Suspense fallback={"LOADING..."}>
-        <SeminarView session={session} data={data} />
-      </Suspense>
+      <EventView session={session} event={event} />
     </div>
   );
 }

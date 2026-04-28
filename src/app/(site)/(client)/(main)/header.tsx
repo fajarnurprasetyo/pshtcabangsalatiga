@@ -1,74 +1,54 @@
 "use client";
 
 import { LinkButton, NavbarLink } from "@/components/link";
+import useLoginUrl from "@/libs/hooks/useLoginUrl";
+import useSession from "@/libs/hooks/useSession";
+import type { PropsWithNullableSession } from "@/types/react";
 import { Avatar, Dropdown, DropdownHeader, DropdownItem } from "flowbite-react";
-import { signOut, useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import {
   FaArrowRightFromBracket,
   FaArrowRightToBracket,
-  FaSpinner,
 } from "react-icons/fa6";
 
-function useLoginUrl() {
-  const pathname = usePathname();
-  return `/login?callbackUrl=${encodeURIComponent(pathname)}`;
-}
-
-export function NavbarUserAvatar() {
-  const session = useSession();
+export function NavbarUserAvatar(props: PropsWithNullableSession) {
+  const { data: session } = useSession(props.session);
   const loginUrl = useLoginUrl();
 
-  switch (session.status) {
-    case "authenticated":
-      return (
-        <Dropdown
-          inline
-          arrowIcon={false}
-          label={<Avatar rounded className="cursor-pointer" />}
-        >
-          <DropdownHeader>
-            <span className="block text-sm">{session.data.user.name}</span>
-          </DropdownHeader>
-          <DropdownItem onClick={() => signOut({ redirect: false })}>
-            Keluar
-          </DropdownItem>
-        </Dropdown>
-      );
-    default:
-      return (
-        <LinkButton href={loginUrl}>
-          <FaArrowRightToBracket className="mr-2" />
-          Masuk
-        </LinkButton>
-      );
-  }
+  return session ? (
+    <Dropdown
+      inline
+      arrowIcon={false}
+      label={<Avatar rounded className="cursor-pointer" />}
+    >
+      <DropdownHeader>
+        <span className="block text-sm font-semibold">{session.user.name}</span>
+      </DropdownHeader>
+      <DropdownItem onClick={() => signOut({ redirect: false })}>
+        Keluar
+      </DropdownItem>
+    </Dropdown>
+  ) : (
+    <LinkButton href={loginUrl}>
+      <FaArrowRightToBracket className="mr-2" />
+      Masuk
+    </LinkButton>
+  );
 }
 
-export function NavbarUserListItem() {
-  const session = useSession();
+export function NavbarUserListItem(props: PropsWithNullableSession) {
+  const { data: session } = useSession(props.session);
   const loginUrl = useLoginUrl();
 
-  switch (session.status) {
-    case "loading":
-      return (
-        <NavbarLink disabled>
-          <FaSpinner className="animate-spin" />
-        </NavbarLink>
-      );
-    case "unauthenticated":
-      return (
-        <NavbarLink href={loginUrl} className="flex items-center">
-          <FaArrowRightFromBracket className="mr-2" />
-          Masuk
-        </NavbarLink>
-      );
-    default:
-      return (
-        <NavbarLink className="flex items-center" onClick={() => signOut()}>
-          <FaArrowRightToBracket className="mr-2" />
-          Keluar
-        </NavbarLink>
-      );
-  }
+  return session ? (
+    <NavbarLink className="flex items-center" onClick={() => signOut()}>
+      <FaArrowRightToBracket className="mr-2" />
+      Keluar
+    </NavbarLink>
+  ) : (
+    <NavbarLink href={loginUrl} className="flex items-center">
+      <FaArrowRightFromBracket className="mr-2" />
+      Masuk
+    </NavbarLink>
+  );
 }
