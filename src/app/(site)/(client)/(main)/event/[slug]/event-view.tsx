@@ -7,7 +7,7 @@ import "dayjs/locale/id";
 import { Button } from "flowbite-react";
 import type { Session } from "next-auth";
 import Image from "next/image";
-import { notFound, redirect, usePathname } from "next/navigation";
+import { notFound, redirect, usePathname, useRouter } from "next/navigation";
 import React from "react";
 import {
   FaCheck,
@@ -30,6 +30,7 @@ export default function SeminarView(props: SeminarViewProps) {
   const event = React.use(props.data);
   if (!event) notFound();
 
+  const router = useRouter();
   const session = React.use(props.session);
   const pathname = usePathname();
   const loginUrl = useLoginUrl();
@@ -48,7 +49,9 @@ export default function SeminarView(props: SeminarViewProps) {
     const next = !liked;
     setLiked(next);
     const update = await updateLikeEvent(event._id, next);
-    setLiked(update);
+
+    if (update !== next) setLiked(update);
+    else router.refresh();
 
     setLikePending(false);
   };
@@ -79,7 +82,10 @@ export default function SeminarView(props: SeminarViewProps) {
     setJoinPending(true);
 
     const success = await joinEvent(event._id);
-    setJoined(success);
+    if (success) {
+      setJoined(true);
+      router.refresh()
+    }
 
     setJoinPending(false);
   };
