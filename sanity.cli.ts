@@ -1,10 +1,21 @@
 /**
-* This configuration file lets you run `$ sanity [command]` in this folder
-* Go to https://www.sanity.io/docs/cli to learn more.
-**/
-import { defineCliConfig } from 'sanity/cli'
+ * This configuration file lets you run `$ sanity [command]` in this folder
+ * Go to https://www.sanity.io/docs/cli to learn more.
+ **/
+import { defineCliConfig } from "sanity/cli";
+import options from "./src/libs/sanity/options";
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET
+const BASE_PATH = "./src/generated/types";
+const SCHEMA_PATH = `${BASE_PATH}/sanity-schema.json`;
+const TYPES_PATH = `${BASE_PATH}/sanity-types.d.ts`;
 
-export default defineCliConfig({ api: { projectId, dataset } })
+export default defineCliConfig({
+  api: options,
+  schemaExtraction: {
+    path: SCHEMA_PATH,
+  },
+  typegen: {
+    schema: SCHEMA_PATH,
+    generates: TYPES_PATH,
+  },
+});

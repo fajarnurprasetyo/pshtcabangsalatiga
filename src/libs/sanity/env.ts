@@ -18,3 +18,8 @@ export const projectId = assertValue(
  */
 export const apiVersion =
   process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-02-28";
+
+export const googleMapsApiKey = assertValue(
+  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+  "Missing environment variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY",
+);

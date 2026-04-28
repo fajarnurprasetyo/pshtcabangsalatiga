@@ -9,11 +9,13 @@ export default defineType({
     defineField({
       name: "title",
       type: "string",
+      title: "Title",
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "image",
       type: "image",
+      title: "Image",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -24,7 +26,7 @@ export default defineType({
       validation: (rule) =>
         rule.required().custom(async (eventRef, context) => {
           const { getClient } = context;
-          const client = getClient({ apiVersion: apiVersion });
+          const client = getClient({ apiVersion });
 
           const existing = await client.fetch(
             `count(*[_type == "certificate" && event._ref == $id])`,
