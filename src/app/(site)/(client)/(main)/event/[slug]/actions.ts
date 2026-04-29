@@ -11,8 +11,7 @@ export async function getEvent(slug: string) {
   if (!data) return null;
 
   const targetId = data._id;
-
-  const [likes, participants] = await prisma.$transaction([
+  const [likes, participants] = await Promise.all([
     prisma.like.findMany({
       select: { userId: true, targetId: true },
       where: { targetId },
