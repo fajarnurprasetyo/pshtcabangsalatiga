@@ -12,7 +12,7 @@ export interface LoginPageProps {
 }
 
 export default function LoginPage(props: LoginPageProps) {
-  const { callbackUrl } = use(props.searchParams);
+  const { callbackUrl = "/" } = use(props.searchParams);
 
   const handleSignin = async (_: void, formData: FormData) => {
     const res = await signIn("credentials", {
@@ -87,7 +87,7 @@ export default function LoginPage(props: LoginPageProps) {
         <p className="text-sm text-center select-none">
           Belum punya akun?&nbsp;
           <Link
-            href="/register"
+            href={`/register?callbackUrl=${callbackUrl}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           >
             Daftar sekarang

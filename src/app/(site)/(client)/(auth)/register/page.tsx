@@ -18,7 +18,7 @@ import {
 } from "flowbite-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { use, useRef, useState, type SubmitEvent } from "react";
 import { FaCheck, FaSpinner, FaXmark } from "react-icons/fa6";
 import { useBoolean, useDebounce, useToggle } from "react-use";
 import { checkUsername, findBranch, register } from "./actions";
@@ -52,7 +52,13 @@ function generateUsername(name: string) {
 //   return "bg-green-500";
 // }
 
-export default function RegisterPage() {
+export interface RegisterPageProps {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}
+
+export default function RegisterPage(props: RegisterPageProps) {
+  const { callbackUrl = "/" } = use(props.searchParams);
+
   const [username, setUsername] = useState("");
   const [usernameUserChanged, setUsernameUserChanged] = useBoolean(false);
   const [usernameChecking, setUsernameChecking] = useBoolean(false);
@@ -126,15 +132,18 @@ export default function RegisterPage() {
 
   const [loading, setLoading] = useBoolean(false);
 
-  const submit = async (formData: FormData) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (loading) return;
+
     setLoading(true);
 
+    const formData = new FormData(event.target);
     const payload = Object.fromEntries(formData.entries());
-    console.log(payload);
     const { data } = await register(payload);
 
     if (data) {
-      await signIn("credentials", { ...data, callbackUrl: "/" });
+      await signIn("credentials", { ...data, callbackUrl });
       return;
     }
 
@@ -151,9 +160,9 @@ export default function RegisterPage() {
         <HR />
 
         <form
-          action={submit}
           autoComplete="off"
           className="flex flex-col gap-4"
+          onSubmit={handleSubmit}
         >
           {/* Full Name */}
           <div>
@@ -388,7 +397,7 @@ export default function RegisterPage() {
         <p className="text-sm text-center select-none">
           Sudah punya akun?&nbsp;
           <Link
-            href="/login"
+            href={`/login?callbackUrl=${callbackUrl}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           >
             Masuk
