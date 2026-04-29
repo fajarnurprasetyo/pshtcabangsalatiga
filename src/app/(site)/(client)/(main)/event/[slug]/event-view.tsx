@@ -1,8 +1,8 @@
 "use client";
 
-import useLoginUrl from "@/libs/hooks/useLoginUrl";
-import { useNodeEnv } from "@/libs/hooks/useNodeEnv";
-import useSession from "@/libs/hooks/useSession";
+import useDownloadCertificateModal from "@/hooks/modals/useDownloadCertificateModal";
+import useLoginUrl from "@/hooks/useLoginUrl";
+import useSession from "@/hooks/useSession";
 import { urlFor } from "@/libs/sanity/image";
 import type { PropsWithNullableSession } from "@/types/react";
 import dayjs from "dayjs";
@@ -32,11 +32,11 @@ export type EventViewProps = PropsWithNullableSession<{
 }>;
 
 export default function EventView(props: EventViewProps) {
-  const env = useNodeEnv();
-
   const router = useRouter();
   const pathname = usePathname();
   const loginUrl = useLoginUrl();
+
+  const { downloadCertificate } = useDownloadCertificateModal();
 
   const [liked, setLiked] = useBoolean(false);
   const [likePending, setLikePending] = useBoolean(false);
@@ -46,22 +46,28 @@ export default function EventView(props: EventViewProps) {
   const [joined, setJoined] = useBoolean(false);
   const [joinPending, setJoinPending] = useBoolean(false);
 
-  const { event } = props;
+  const {
+    event: { title, likes, participants, hasCertificate, ...event },
+  } = props;
 
   const now = dayjs();
   const startDate = dayjs(event.startDate);
-  const finishDate = dayjs(event.finishDate);
+  const finishDate = dayjs(event.finishDate ?? event.startDate);
 
-  const eventStarted = now.isAfter(startDate);
-  const eventPassed = event.fullDay
-    ? now.startOf("day").isAfter(finishDate.startOf("day"))
-    : now.isAfter(finishDate);
+  const eventStarted = startDate.isValid() && now.isAfter(startDate);
+  const eventPassed =
+    finishDate.isValid() &&
+    (event.fullDay
+      ? now.startOf("day").isAfter(finishDate.startOf("day"))
+      : now.isAfter(finishDate));
+
+  console.log(now.toISOString(), finishDate.toISOString());
 
   const { data: session } = useSession(props.session, {
     required: false,
     onSignIn({ user: { id } }) {
-      setLiked(event.likes.some(({ userId }) => userId === id));
-      setJoined(event.participants.some(({ userId }) => userId === id));
+      setLiked(likes.some(({ userId }) => userId === id));
+      setJoined(participants.some(({ userId }) => userId === id));
     },
     onSignOut() {
       setLiked(false);
@@ -87,12 +93,7 @@ export default function EventView(props: EventViewProps) {
 
   const handleShare = async () => {
     setSharing(true);
-
-    await navigator.share({
-      title: event.title!,
-      url: pathname,
-    });
-
+    await navigator.share({ title: title ?? pathname, url: pathname }).catch();
     setSharing(false);
   };
 
@@ -113,7 +114,7 @@ export default function EventView(props: EventViewProps) {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold text-center">{event.title}</h1>
+      <h1 className="text-2xl font-semibold text-center">{title}</h1>
       <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-0 items-stretch md:items-center justify-between">
         <div className="flex flex-col gap-1">
           <div className="flex gap-1 items-center">
@@ -125,7 +126,8 @@ export default function EventView(props: EventViewProps) {
             </Link>
             <FaChevronRight />
             <Link
-              href={`/event?t=${event.type}`}
+              // `/event?t=${event.type}`
+              href="#"
               className="font-semibold text-blue-600 dark:text-blue-500"
             >
               {event.type === "seminar" ? "Seminar" : "Kompetisi"}
@@ -155,14 +157,16 @@ export default function EventView(props: EventViewProps) {
           </Button>
         </div>
       </div>
-      <Image
-        alt={event.title!}
-        src={urlFor(event.thumbnail!).url()}
-        width={1920}
-        height={1080}
-        loading="eager"
-        className="w-full aspect-video self-center"
-      />
+      {event.thumbnail && (
+        <Image
+          alt="Event thumbnail"
+          src={urlFor(event.thumbnail).url()}
+          width={1920}
+          height={1080}
+          loading="eager"
+          className="w-full aspect-video self-center"
+        />
+      )}
 
       <div className="flex flex-col sm:flex-row gap-2 md:gap-0 items-center md:items-start justify-between">
         <div className="flex flex-col gap-1">
@@ -192,12 +196,12 @@ export default function EventView(props: EventViewProps) {
               Daftar
             </Button>
           )}
-          {eventPassed && joined && (
+          {hasCertificate && eventPassed && joined && (
             <Button
               pill
               size="sm"
               className="px-4"
-              // onClick={handleDownloadCertificate}
+              onClick={() => downloadCertificate(session!.user, event)}
             >
               <div className="mr-2">
                 <FaDownload />

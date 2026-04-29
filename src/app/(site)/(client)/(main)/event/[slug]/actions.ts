@@ -1,6 +1,6 @@
 "use server";
 
-import type { Event } from "@/generated/types/sanity-types";
+import type { Event } from "@/generated/types/sanity";
 import { authOptions } from "@/libs/next-auth";
 import prisma from "@/libs/prisma";
 import { fetchEvent } from "@/libs/sanity/queries/event";
@@ -41,8 +41,8 @@ export async function updateLikeEvent(targetId: Event["_id"], like: boolean) {
         });
       }
       return like;
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -59,8 +59,8 @@ export async function joinEvent(targetId: Event["_id"]) {
       data: { userId, targetId },
     });
     return true;
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
   }
 
   return false;

@@ -1,6 +1,6 @@
 "use server";
 
-import type { Event } from "@/generated/types/sanity-types";
+import type { Event } from "@/generated/types/sanity";
 import prisma from "@/libs/prisma";
 import { fetchEvents } from "@/libs/sanity/queries/event";
 
