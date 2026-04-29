@@ -25,9 +25,9 @@ export default function ClientLayout({ children }: PropsWithChildren) {
     <ThemeProvider theme={theme}>
       <html
         lang="id"
-        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <body className="min-h-screen flex flex-col">{children}</body>
+        <body className="min-h-[100dvh] flex flex-col">{children}</body>
       </html>
     </ThemeProvider>
   );
