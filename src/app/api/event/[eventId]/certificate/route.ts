@@ -2,10 +2,16 @@ import { authOptions } from "@/libs/next-auth";
 import prisma from "@/libs/prisma";
 import { urlFor } from "@/libs/sanity/image";
 import { fetchCertificate } from "@/libs/sanity/queries/certificate";
-import { createCanvas, loadImage } from "canvas";
+import { createCanvas, loadImage, registerFont } from "canvas";
 import dayjs from "dayjs";
 import { getServerSession, type Session } from "next-auth";
 import { NextResponse, type NextRequest } from "next/server";
+import path from "path";
+
+registerFont(path.join(process.cwd(), "public/assets/fonts/arial-bold.ttf"), {
+  family: "Arial",
+  weight: "bold",
+});
 
 const WIDTH = 1754;
 const HEIGHT = 1240;

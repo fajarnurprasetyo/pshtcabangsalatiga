@@ -11,7 +11,6 @@ export default function DownloadCertificateModalProvider({
   children,
 }: PropsWithChildren) {
   const [showModal, setShowModal] = useBoolean(false);
-  const [progressText, setProgressText] = useState<string | null>(null);
   const [errorText, setErrorText] = useState<string | null>(null);
 
   const handleDownload = async (
@@ -21,7 +20,6 @@ export default function DownloadCertificateModalProvider({
     if (showModal) return;
 
     setShowModal(true);
-    setProgressText("Membuat sertifikat...");
     setErrorText(null);
 
     try {
@@ -33,7 +31,6 @@ export default function DownloadCertificateModalProvider({
 
       if (!res.ok) throw new Error(await res.text());
 
-      setProgressText("Mengunduh sertifikat...");
       const pdfBlob = await res.blob();
       const pdfUrl = URL.createObjectURL(pdfBlob);
 
@@ -66,12 +63,12 @@ export default function DownloadCertificateModalProvider({
       value={{ downloadCertificate: handleDownload }}
     >
       {children}
-      <Modal show={showModal} onClose={handleCancel}>
+      <Modal show={showModal} onClose={handleCancel} className="z-2000">
         <ModalBody className="flex flex-col">
           {!errorText ? (
             <div className="flex gap-2">
               <Spinner size="sm" />
-              <p>{progressText}</p>
+              <p>Mengunduh sertifikat...</p>
             </div>
           ) : (
             <>

@@ -247,7 +247,9 @@ export default function RegisterPage(props: RegisterPageProps) {
               type={showPassword ? "text" : "password"}
               name="password"
               autoComplete="new-password"
-              color={passwordError ? "failure" : "gray"}
+              color={
+                password.length > 0 && password.length < 8 ? "failure" : "gray"
+              }
               value={password}
               onChange={({ target }) => setPassword(target.value)}
             />
