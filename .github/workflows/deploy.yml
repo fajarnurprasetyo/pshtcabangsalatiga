@@ -1,0 +1,51 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: 24
+
+      - name: Deploy Preview
+        if: github.ref_name != 'main'
+        run: |
+          echo "DEPLOY_ENV=Preview" >> $GITHUB_ENV
+          URL=$(npx vercel --token=${{ secrets.VERCEL_TOKEN }})
+          echo "DEPLOY_URL=https://$URL" >> $GITHUB_ENV
+
+      - name: Deploy Production
+        if: github.ref_name == 'main'
+        run: |
+          echo "DEPLOY_ENV=Production" >> $GITHUB_ENV
+          URL=$(npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "DEPLOY_URL=https://$URL" >> $GITHUB_ENV
+
+      - name: Send email
+        if: success()
+        uses: dawidd6/action-send-mail@v17
+        with:
+          connection_url: ${{ secrets.MAIL_CONNECTION }}
+          from: "GitHub CI <media.pshtcabangsalatiga@gmail.com>"
+          to: fajarnurprasetyo.2@gmail.com
+          subject: "🚀 New ${{ env.DEPLOY_ENV }} Deployed"
+          body: |
+            Repo: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Author: ${{ github.actor }}
+
+            Live URL: ${{ env.DEPLOY_URL }}
+            
+            Message: ${{ github.event.head_commit.message }}

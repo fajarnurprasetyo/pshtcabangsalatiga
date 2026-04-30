@@ -24,9 +24,5 @@ export default async function SeminarPage(props: SeminarPageProps) {
 
   const session = await getServerSession(authOptions);
 
-  return (
-    <div className="flex flex-col gap-6 sm:gap-8">
-      <EventView session={session} event={event} />
-    </div>
-  );
+  return <EventView session={session} event={event} />;
 }
