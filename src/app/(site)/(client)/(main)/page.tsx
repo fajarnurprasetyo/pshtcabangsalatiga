@@ -6,7 +6,7 @@ export default async function HomePage() {
   const seminar = fetchData("seminar");
 
   return (
-    <div className="flex flex-col w-full max-w-7xl px-2 py-4 sm:px-4 sm:py-6 self-center">
+    <div className="flex flex-col w-full max-w-7xl self-center">
       <Suspense fallback={"LOADING..."}>
         <EventList data={seminar} />
       </Suspense>
