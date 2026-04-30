@@ -51,10 +51,10 @@ async function generatePdf(session: Session, eventId: string) {
   const bgImage = await loadImage(bgImageUrl);
   ctx.drawImage(bgImage, 0, 0, WIDTH, HEIGHT);
 
-  ctx.font = "Bold 74px Arial";
+  ctx.font = "Bold 72px Arial";
   ctx.textAlign = "center";
   ctx.fillStyle = "#181818";
-  ctx.fillText(name, WIDTH / 2, 558);
+  ctx.fillText(name, WIDTH / 2, 552);
 
   const title = `Sertifikat ${event.title ?? eventId} - ${name}`;
   const pdfStream = canvas.createPDFStream({

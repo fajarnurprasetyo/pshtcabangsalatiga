@@ -4,6 +4,10 @@
 
 @variant dark false;
 
+@theme {
+  --color-primary: oklch(53.9% 0.1853 263.4);
+}
+
 button {
   cursor: pointer;
 }

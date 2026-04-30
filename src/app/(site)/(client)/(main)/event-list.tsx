@@ -21,7 +21,7 @@ export default function EventList(props: EventListProps) {
         .filter(({ slug }) => slug)
         .map((event) => (
           <Link key={event._id} href={`/event/${event.slug!.current}`}>
-            <div className="relative rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800 text-shadow-lg aspect-video overflow-hidden">
+            <div className="relative aspect-video bg-gray-200 text-white border border-gray-300 rounded-lg shadow-md text-shadow-lg overflow-hidden">
               {event.thumbnail && (
                 <Image
                   alt="Event thumbnail"
@@ -30,10 +30,10 @@ export default function EventList(props: EventListProps) {
                   height={360}
                 />
               )}
-              <div className="absolute w-full flex top-0 bg-gradient-to-b from-black/80 to-black/0 px-3 pb-3 pt-1">
+              <div className="absolute flex w-full top-0 bg-gradient-to-b from-black/80 to-black/0 px-3 pb-3 pt-1">
                 <h5 className="text-lg">{event.title}</h5>
               </div>
-              <div className="absolute w-full flex bottom-0 bg-gradient-to-t from-black/80 to-black/0 px-3 pb-0.5 pt-3 justify-between">
+              <div className="absolute flex w-full bottom-0 bg-gradient-to-t from-black/80 to-black/0 px-3 pb-0.5 pt-3 justify-between">
                 <div className="flex items-baseline">
                   <FaClock className="mr-1 w-3 h-3" />
                   {dayjs(event.startDate).format("DD/MM/YYYY HH:mm")}
