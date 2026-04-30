@@ -1,10 +1,22 @@
 "use server";
 
-import type { Event } from "@/generated/types/sanity";
 import { authOptions } from "@/libs/next-auth";
 import prisma from "@/libs/prisma";
+import { fetchArticle } from "@/libs/sanity/queries";
 import { fetchEvent } from "@/libs/sanity/queries/event";
 import { getServerSession } from "next-auth";
+
+export async function getArticle(slug: string) {
+  const data = await fetchArticle(slug);
+  if (!data) return null;
+
+  const likes = await prisma.like.findMany({
+    select: { userId: true, targetId: true },
+    where: { targetId: data._id },
+  });
+
+  return { ...data, likes };
+}
 
 export async function getEvent(slug: string) {
   const data = await fetchEvent(slug);
@@ -25,7 +37,7 @@ export async function getEvent(slug: string) {
   return { ...data, likes, participants };
 }
 
-export async function updateLikeEvent(targetId: Event["_id"], like: boolean) {
+export async function updateLikeEvent(targetId: string, like: boolean) {
   const session = await getServerSession(authOptions);
 
   if (session) {
@@ -49,7 +61,7 @@ export async function updateLikeEvent(targetId: Event["_id"], like: boolean) {
   return !like;
 }
 
-export async function joinEvent(targetId: Event["_id"]) {
+export async function joinEvent(targetId: string) {
   const session = await getServerSession(authOptions);
   if (!session) return false;
 

@@ -9,7 +9,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/id";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { notFound, redirect, usePathname, useRouter } from "next/navigation";
+import { use } from "react";
 import {
   FaCheck,
   FaChevronRight,
@@ -27,10 +28,13 @@ import { joinEvent, updateLikeEvent, type getEvent } from "./actions";
 dayjs.locale("id");
 
 export type EventViewProps = PropsWithNullableSession<{
-  event: NonNullable<Awaited<ReturnType<typeof getEvent>>>;
+  event: ReturnType<typeof getEvent>;
 }>;
 
 export default function EventView(props: EventViewProps) {
+  const event = use(props.event);
+  if (!event) notFound();
+
   const router = useRouter();
   const pathname = usePathname();
   const loginUrl = useLoginUrl();
@@ -42,10 +46,6 @@ export default function EventView(props: EventViewProps) {
 
   const [joined, setJoined] = useBoolean(false);
   const [joinPending, setJoinPending] = useBoolean(false);
-
-  const {
-    event: { title, likes, participants, hasCertificate, ...event },
-  } = props;
 
   const now = dayjs();
   const startDate = dayjs(event.startDate);
@@ -63,8 +63,8 @@ export default function EventView(props: EventViewProps) {
   const { data: session } = useSession(props.session, {
     required: false,
     onSignIn({ user: { id } }) {
-      setLiked(likes.some(({ userId }) => userId === id));
-      setJoined(participants.some(({ userId }) => userId === id));
+      setLiked(event.likes.some(({ userId }) => userId === id));
+      setJoined(event.participants.some(({ userId }) => userId === id));
     },
     onSignOut() {
       setLiked(false);
@@ -105,7 +105,8 @@ export default function EventView(props: EventViewProps) {
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
-      <h1 className="text-2xl font-semibold text-center">{title}</h1>
+      <div className="text-2xl font-semibold text-center">{event.title}</div>
+
       <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-0 items-stretch md:items-center justify-between">
         <div className="flex flex-col gap-1">
           <div className="flex gap-1 items-center">
@@ -139,21 +140,22 @@ export default function EventView(props: EventViewProps) {
           <button
             className="flex items-center justify-center size-8 md:size-9 border border-primary text-primary rounded-full"
             onClick={() =>
-              navigator.share({ title: title ?? pathname, url: pathname })
+              navigator.share({ title: event.title || pathname, url: pathname })
             }
           >
             <FaShare />
           </button>
         </div>
       </div>
+
       {event.thumbnail && (
         <Image
-          alt="Event thumbnail"
-          src={urlFor(event.thumbnail).url()}
           width={1920}
           height={1080}
           loading="eager"
           className="w-full aspect-video rounded-md"
+          src={urlFor(event.thumbnail).url()}
+          alt="Event thumbnail"
         />
       )}
 
@@ -182,9 +184,11 @@ export default function EventView(props: EventViewProps) {
             Daftar
           </button>
         )}
-        {hasCertificate && eventPassed && joined && (
+        {event.hasCertificate && eventPassed && joined && (
           <button
-            onClick={() => downloadCertificate(session!.user, event)}
+            onClick={() =>
+              downloadCertificate(session!.user, event._id, event.title)
+            }
             className="h-9 md:h-10 px-4 bg-primary text-white rounded-full"
           >
             <div className="mr-2">

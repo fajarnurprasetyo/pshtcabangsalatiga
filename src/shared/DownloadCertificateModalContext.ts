@@ -1,9 +1,12 @@
-import type { Event } from "@/generated/types/sanity";
 import type { User } from "next-auth";
 import { createContext } from "react";
 
 export interface DownloadCertificateModalContextValue {
-  downloadCertificate(user: User, event: Pick<Event, "_id" | "title">): void;
+  downloadCertificate(
+    user: User,
+    eventId: string,
+    eventTitle: string | null,
+  ): void;
 }
 
 const DownloadCertificateModalContext =

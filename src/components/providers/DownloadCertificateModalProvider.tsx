@@ -1,6 +1,5 @@
 "use client";
 
-import type { Event } from "@/generated/types/sanity";
 import DownloadCertificateModalContext from "@/shared/DownloadCertificateModalContext";
 import { Button, Modal, ModalBody, Spinner } from "flowbite-react";
 import type { User } from "next-auth";
@@ -15,7 +14,8 @@ export default function DownloadCertificateModalProvider({
 
   const handleDownload = async (
     user: User,
-    event: Pick<Event, "_id" | "title">,
+    eventId: string,
+    eventTitle: string | null,
   ) => {
     if (showModal) return;
 
@@ -23,7 +23,7 @@ export default function DownloadCertificateModalProvider({
     setErrorText(null);
 
     try {
-      const url = `/api/event/${event._id}/certificate`;
+      const url = `/api/event/${eventId}/certificate`;
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/pdf" },
@@ -36,7 +36,7 @@ export default function DownloadCertificateModalProvider({
 
       const link = document.createElement("a");
       link.href = pdfUrl;
-      link.download = `${event.title ?? event._id} - ${user.name}`;
+      link.download = `${eventTitle || eventId} - ${user.name}`;
 
       document.body.appendChild(link);
       link.click();

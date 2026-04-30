@@ -1,4 +1,5 @@
 import DownloadCertificateModalProvider from "@/components/providers/DownloadCertificateModalProvider";
+import NextAuthSessionProvider from "@/components/providers/NextAuthSessionProvider";
 import { Geist, Geist_Mono } from "next/font/google";
 import type { PropsWithChildren } from "react";
 import "./globals.css";
@@ -19,9 +20,11 @@ export default function ClientLayout({ children }: PropsWithChildren) {
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
-      <DownloadCertificateModalProvider>
-        <body className="min-h-[100dvh] flex flex-col">{children}</body>
-      </DownloadCertificateModalProvider>
+      <NextAuthSessionProvider>
+        <DownloadCertificateModalProvider>
+          <body className="min-h-[100dvh] flex flex-col">{children}</body>
+        </DownloadCertificateModalProvider>
+      </NextAuthSessionProvider>
     </html>
   );
 }

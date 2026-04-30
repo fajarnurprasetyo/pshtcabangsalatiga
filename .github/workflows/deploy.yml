@@ -22,16 +22,38 @@ jobs:
       - name: Deploy Preview
         if: github.ref_name != 'main'
         run: |
-          echo "DEPLOY_ENV=Preview" >> $GITHUB_ENV
-          URL=$(npx vercel --yes --token=${{ secrets.VERCEL_TOKEN }})
-          echo "DEPLOY_URL=https://$URL" >> $GITHUB_ENV
+          echo "DEPLOY_ENV=preview" >> $GITHUB_ENV
+          npx vercel --yes --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Production
         if: github.ref_name == 'main'
         run: |
-          echo "DEPLOY_ENV=Production" >> $GITHUB_ENV
-          URL=$(npx vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
-          echo "DEPLOY_URL=https://$URL" >> $GITHUB_ENV
+          echo "DEPLOY_ENV=production" >> $GITHUB_ENV
+          npx vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Get Assigned Url
+        run: |
+          DEPLOY_ID=$(curl -X GET 'https://api.vercel.com/v6/deployments?projectId=${{ secrets.VERCEL_PROJECT_ID }}&target=${{ env.DEPLOY_ENV }}&state=READY&limit=1' \
+            -H 'Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}' \
+            -H 'Content-Type: application/json' \
+            | jq -r '.deployments[0] | .uid')
+
+          mapfile -t DEPLOY_URLS < <(curl -X GET "https://api.vercel.com/v2/deployments/$DEPLOY_ID/aliases" \
+            -H 'Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}' \
+            -H 'Content-Type: application/json' \
+            | jq -r '.aliases[0] | .alias')
+
+          for url in "${DEPLOY_URLS[@]}"; do
+            if [[ "$url" != *.vercel.app ]]; then
+              if [[ "$url" != www.* ]]; then
+                echo "DEPLOY_CUSTOM_URL=$url" >> $GITHUB_ENV
+              fi
+            elif [[ "$url" == *git-* ]]; then
+              echo "DEPLOY_GIT_URL=$url" >> $GITHUB_ENV
+            else
+              echo "DEPLOY_PROJECT_URL=$url" >> $GITHUB_ENV
+            fi
+          done
 
       - name: Send email
         if: success()
@@ -39,13 +61,51 @@ jobs:
         with:
           connection_url: ${{ secrets.MAIL_CONNECTION }}
           from: "GitHub CI <media.pshtcabangsalatiga@gmail.com>"
-          to: fajarnurprasetyo.2@gmail.com
-          subject: "🚀 New ${{ env.DEPLOY_ENV }} Deployed"
+          to: fajarnurprasetyo.2@gmail.com, gustianrauf@gmail.com
+          subject: "🚀 ${{ env.DEPLOY_ENV }} deployed"
+          content_type: "text/html"
+          convert_markdown: true
           body: |
-            Repo: ${{ github.repository }}
-            Branch: ${{ github.ref_name }}
-            Author: ${{ github.actor }}
+            ## Deployment Info
 
-            Live URL: ${{ env.DEPLOY_URL }}
-            
-            Message: ${{ github.event.head_commit.message }}
+            <table border="1">
+              <tr>
+                <td><b>Repository</b></td>
+                <td>${{ github.repository }}</td>
+              </tr>
+              <tr>
+                <td><b>Branch</b></td>
+                <td>${{ github.ref_name }}</td>
+              </tr>
+              <tr>
+                <td><b>Author</b></td>
+                <td>${{ github.actor }}</td>
+              </tr>
+              <tr>
+                <td><b>Live Url</b></td>
+                <td>
+                  <a href="${{ env.DEPLOY_CUSTOM_URL }}">
+                    ${{ env.DEPLOY_CUSTOM_URL }}
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Project Url</b></td>
+                <td>
+                  <a href="${{ env.DEPLOY_PROJECT_URL }}">
+                    ${{ env.DEPLOY_PROJECT_URL }}
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td><b>GIT Url</b></td>
+                <td>
+                  <a href="${{ env.DEPLOY_GIT_URL }}">
+                    ${{ env.DEPLOY_GIT_URL }}
+                  </a>
+                </td>
+              </tr>
+            </table>
+
+            ## Commit Message
+            ${{ github.event.head_commit.message }}

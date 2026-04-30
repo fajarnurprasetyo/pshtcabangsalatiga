@@ -56,7 +56,7 @@ async function generatePdf(session: Session, eventId: string) {
   ctx.fillStyle = "#181818";
   ctx.fillText(name, WIDTH / 2, 552);
 
-  const title = `Sertifikat ${event.title ?? eventId} - ${name}`;
+  const title = `Sertifikat ${event.title || eventId} - ${name}`;
   const pdfStream = canvas.createPDFStream({
     title,
     author: "PSHT Cabang Salatiga",

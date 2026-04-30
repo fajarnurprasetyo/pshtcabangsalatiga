@@ -21,7 +21,7 @@ export default function LoginPage(props: LoginPageProps) {
       redirect: false,
     });
 
-    if (res?.ok) redirect(callbackUrl ?? "/");
+    if (res?.ok) redirect(callbackUrl || "/");
 
     alert("Nama pengguna atau kata sandi tidak cocok!");
   };

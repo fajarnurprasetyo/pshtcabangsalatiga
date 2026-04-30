@@ -11,4 +11,18 @@ export default withFlowbiteReact({
       },
     ],
   },
+  redirects() {
+    return [
+      {
+        source: "/article/:slug*",
+        destination: "/artikel/:slug*",
+        permanent: true,
+      },
+      {
+        source: "/event/:slug*",
+        destination: "/kegiatan/:slug*",
+        permanent: true,
+      },
+    ];
+  },
 });

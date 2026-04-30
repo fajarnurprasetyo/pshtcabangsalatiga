@@ -1,10 +1,15 @@
 import { faker } from "@faker-js/faker";
 import _ from "lodash";
-import Link from "next/link";
 import { useMemo } from "react";
-import { FaHouse } from "react-icons/fa6";
+import { PostType } from "../page";
 
-export default function EventLoadingPage() {
+export interface PostLoadingPageProps {
+  type: PostType;
+}
+
+export default function PostLoadingPage({ type }: PostLoadingPageProps) {
+  const isEvent = type === PostType.event;
+
   const fakeTitle = useMemo(() => {
     const length = faker.number.int({ min: 5, max: 8 });
     return Array.from({ length }, () => _.startCase(faker.word.noun()));
@@ -26,10 +31,11 @@ export default function EventLoadingPage() {
       <div className="flex items-end justify-between">
         <div className="flex flex-col gap-1">
           <div className="flex gap-1 items-center">
-            <Link href="/" className="font-semibold text-blue-600">
+            &nbsp;
+            {/* <Link href="/" className="font-semibold text-blue-600">
               <FaHouse />
             </Link>
-            {/* <FaChevronRight />
+            <FaChevronRight />
             <Link
               // `/event?t=${event.type}`
               href="#"
@@ -60,7 +66,9 @@ export default function EventLoadingPage() {
             Minggu, 09 September 2009 09:09 WIB
           </div>
         </div>
-        <div className="animate-pulse w-[160px] h-9 md:h-10 bg-gray-300 rounded-full" />
+        {isEvent && (
+          <div className="animate-pulse w-[160px] h-9 md:h-10 bg-gray-300 rounded-full" />
+        )}
       </div>
     </div>
   );
