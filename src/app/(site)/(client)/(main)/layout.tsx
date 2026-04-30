@@ -2,7 +2,6 @@
 
 import useLoginUrl from "@/hooks/useLoginUrl";
 import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { type PropsWithChildren } from "react";
@@ -25,16 +24,8 @@ export default function MainLayout({ children }: PropsWithChildren) {
     <>
       <header className="sticky top-0 z-1000">
         <div className="flex items-center justify-between bg-black px-3 md:px-4 py-2 md:py-3">
-          <Link
-            href="/"
-            className="relative w-[180px] h-[48px] md:w-[240px] md:h-[64px]"
-          >
-            <Image
-              alt="Main logo"
-              src="/assets/images/logo_main.png"
-              fill
-              objectFit="object-contain"
-            />
+          <Link href="/">
+            <div className="relative w-[180px] h-[48px] md:w-[240px] md:h-[64px] bg-[url(/assets/images/logo_main.png)] bg-cover" />
           </Link>
           <button
             className="-me-1 size-8 md:size-10 flex items-center justify-center text-md md:text-xl text-white/70 hover:text-white transition-opacity"
@@ -58,7 +49,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
         </div>
         <div className="h-[3px] md:h-[5px] bg-primary" />
       </header>
-      <main className="flex flex-1 flex-col w-full max-w-7xl px-2 py-4 sm:px-4 sm:py-6 self-center">
+      <main className="flex flex-1 flex-col w-full max-w-7xl px-2 py-4 md:px-4 md:py-6 self-center">
         {children}
       </main>
       <footer className="flex flex-col-reverse md:flex-row items-center justify-between bg-gray-800 text-gray-400 px-3 md:px-4 py-2 md:py-3">
