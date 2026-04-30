@@ -14,7 +14,6 @@ jobs:
           from: "GitHub CI <media.pshtcabangsalatiga@gmail.com>"
           to: fajarnurprasetyo.2@gmail.com
           subject: "🚀 Push Baru - ${{ github.ref_name }}"
-          content_type: text/html
           body: |
             <h2>🚀 Push Baru</h2>
             <p><b>Repo:</b> ${{ github.repository }}</p>
