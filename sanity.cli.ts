@@ -6,8 +6,8 @@ import { defineCliConfig } from "sanity/cli";
 import options from "./src/libs/sanity/options";
 
 const BASE_PATH = "./src/generated/types";
-const SCHEMA_PATH = `${BASE_PATH}/sanity-schema.json`;
-const TYPES_PATH = `${BASE_PATH}/sanity-types.d.ts`;
+const SCHEMA_PATH = `${BASE_PATH}/sanity.json`;
+const TYPES_PATH = `${BASE_PATH}/sanity.d.ts`;
 
 export default defineCliConfig({
   api: options,

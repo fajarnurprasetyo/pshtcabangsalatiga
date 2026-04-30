@@ -28,8 +28,8 @@ seed()
   .then(async () => {
     await prisma.$disconnect();
   })
-  .catch(async (error) => {
-    console.error(error);
+  .catch(async (err) => {
+    console.error(err);
     await prisma.$disconnect();
     process.exit(1);
   });

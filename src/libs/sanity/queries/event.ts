@@ -1,8 +1,8 @@
 import type {
-  Event,
-  EventQueryResult,
-  EventsQueryResult,
-} from "@/generated/types/sanity-types";
+    Event,
+    EventQueryResult,
+    EventsQueryResult,
+} from "@/generated/types/sanity";
 import { groq } from "next-sanity";
 import z from "zod";
 import sanity from "./client";
@@ -79,7 +79,8 @@ export const EventQuery = groq`
   fullDay,
   location,
   thumbnail,
-  content
+  content,
+  "hasCertificate": count(*[_type == "certificate" && event._ref == ^._id]) > 0
 }
 `;
 

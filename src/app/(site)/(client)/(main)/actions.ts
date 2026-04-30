@@ -1,6 +1,6 @@
 "use server";
 
-import type { Event } from "@/generated/types/sanity-types";
+import type { Event } from "@/generated/types/sanity";
 import prisma from "@/libs/prisma";
 import { fetchEvents } from "@/libs/sanity/queries/event";
 
@@ -9,12 +9,12 @@ export async function fetchData(type: Required<Event["type"]>) {
   return Promise.all(
     events.map(async (data) => {
       const targetId = data._id;
-
-      const [likeCount, participantCount] = await prisma.$transaction([
+      const [likeCount, participantCount] = await Promise.all([
         prisma.like.count({ where: { targetId } }),
-        prisma.participant.count({ where: { targetId } }),
+        prisma.participant.count({
+          where: { targetId },
+        }),
       ]);
-
       return { ...data, likeCount, participantCount };
     }),
   );

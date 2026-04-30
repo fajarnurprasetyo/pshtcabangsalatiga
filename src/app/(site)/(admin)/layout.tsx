@@ -15,8 +15,8 @@ export default async function AdminLayout({ children }: PropsWithChildren) {
   }
 
   return (
-    <html lang="id">
-      <body className="min-h-screen">{children}</body>
+    <html lang="id" className="antialiased">
+      <body className="min-h-[100dvh]">{children}</body>
     </html>
   );
 }

@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import LocationInput from "../components/LocationInput";
 
 export default defineType({
   name: "event",
@@ -33,6 +34,12 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "thumbnail",
+      type: "image",
+      title: "Thumbnail",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: "date",
       type: "datetime",
       title: "Publish Date",
@@ -60,15 +67,27 @@ export default defineType({
     }),
     defineField({
       name: "location",
-      type: "geopoint",
+      type: "object",
       title: "Location",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: "thumbnail",
-      type: "image",
-      title: "Thumbnail",
-      validation: (rule) => rule.required(),
+      // validation: (rule) => rule.required(),
+      components: { input: LocationInput },
+      fields: [
+        {
+          name: "geo",
+          type: "geopoint",
+          title: "Coordinates",
+        },
+        {
+          name: "placeName",
+          type: "string",
+          title: "Place Name",
+        },
+        {
+          name: "address",
+          type: "string",
+          title: "Address",
+        },
+      ],
     }),
     defineField({
       name: "content",
