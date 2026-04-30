@@ -41,7 +41,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
             {session.status === "loading" ? (
               <FaSpinner className="animate-spin" />
             ) : session.status === "authenticated" ? (
-              <FaArrowRightFromBracket />
+              <FaArrowRightFromBracket className="text-red-500" />
             ) : (
               <FaArrowRightToBracket />
             )}

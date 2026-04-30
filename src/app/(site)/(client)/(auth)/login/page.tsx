@@ -79,16 +79,11 @@ export default function LoginPage(props: LoginPageProps) {
           <HR className="flex-1" />
         </div>
 
-        {/* <button className="w-full rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 cursor-pointer">
-          <GoogleIcon className="inline-block w-5 h-5 mr-2" />
-          Sign up with Google
-        </button> */}
-
         <p className="text-sm text-center select-none">
           Belum punya akun?&nbsp;
           <Link
             href={`/register?callbackUrl=${callbackUrl}`}
-            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            className="font-medium text-blue-600 hover:underline"
           >
             Daftar sekarang
           </Link>
