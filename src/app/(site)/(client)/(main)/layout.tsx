@@ -27,7 +27,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
         <div className="flex items-center justify-between bg-black px-3 md:px-4 py-2 md:py-3">
           <Link
             href="/"
-            className="relative w-[128px] h-[34px] md:w-[240px] md:h-[64px]"
+            className="relative w-[180px] h-[48px] md:w-[240px] md:h-[64px]"
           >
             <Image
               alt="Main logo"
@@ -37,7 +37,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
             />
           </Link>
           <button
-            className="-me-1 size-8 md:size-12 flex items-center justify-center text-xl md:text-3xl text-white/70 hover:text-white transition-opacity"
+            className="-me-1 size-8 md:size-10 flex items-center justify-center text-md md:text-xl text-white/70 hover:text-white transition-opacity"
             onClick={() => {
               switch (session.status) {
                 case "unauthenticated":
@@ -56,12 +56,12 @@ export default function MainLayout({ children }: PropsWithChildren) {
             )}
           </button>
         </div>
-        <div className="h-[3px] md:h-[5px] bg-blue-700" />
+        <div className="h-[3px] md:h-[5px] bg-primary" />
       </header>
       <main className="flex flex-1 flex-col w-full max-w-7xl px-2 py-4 sm:px-4 sm:py-6 self-center">
         {children}
       </main>
-      <footer className="flex flex-col-reverse md:flex-row items-center justify-between bg-gray-800 text-gray-400 px-3 md:px-4 pt-2 pb-3 md:py-3">
+      <footer className="flex flex-col-reverse md:flex-row items-center justify-between bg-gray-800 text-gray-400 px-3 md:px-4 py-2 md:py-3">
         <div className="text-xs">
           © 2026 PSHT Cabang Salatiga. All rights reserved.
         </div>
