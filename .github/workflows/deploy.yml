@@ -64,9 +64,8 @@ jobs:
           from: "GitHub CI <media.pshtcabangsalatiga@gmail.com>"
           to: fajarnurprasetyo.2@gmail.com, gustianrauf@gmail.com
           subject: "🚀 ${{ env.DEPLOY_ENV }} deployed"
-          content_type: "text/html"
           convert_markdown: true
-          body: |
+          html_body: |
             ## Deployment Info
 
             <table border="1">
