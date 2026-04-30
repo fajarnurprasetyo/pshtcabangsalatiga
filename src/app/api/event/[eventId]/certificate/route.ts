@@ -20,7 +20,7 @@ async function isAuthorized(session: Session, eventId: string) {
   const userId = session.user.id;
 
   const participated = await prisma.participant.findUnique({
-    where: { userId_targetId: { userId, targetId: eventId } },
+    where: { userId_postId: { userId, postId: eventId } },
   });
 
   return !!participated;

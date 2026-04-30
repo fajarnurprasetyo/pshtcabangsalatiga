@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { type PostsRouteParams } from ".";
 
 export interface PostsPageProps {
@@ -5,5 +6,5 @@ export interface PostsPageProps {
 }
 
 export default async function PostsPage() {
-  return "404: Not found";
+  notFound();
 }

@@ -3,8 +3,6 @@ export enum PostType {
   event = "kegiatan",
 }
 
-export const PostTypes = [PostType.article, PostType.event] as string[];
-
 export interface PostsRouteParams {
-  type: PostType;
+  type: string;
 }

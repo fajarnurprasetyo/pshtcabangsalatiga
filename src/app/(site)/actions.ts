@@ -8,11 +8,11 @@ export async function fetchData(type: Required<Event["type"]>) {
   const events = await fetchEvents({ type: type, take: 3 });
   return Promise.all(
     events.map(async (data) => {
-      const targetId = data._id;
+      const postId = data._id;
       const [likeCount, participantCount] = await Promise.all([
-        prisma.like.count({ where: { targetId } }),
+        prisma.like.count({ where: { postId } }),
         prisma.participant.count({
-          where: { targetId },
+          where: { postId },
         }),
       ]);
       return { ...data, likeCount, participantCount };

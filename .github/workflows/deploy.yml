@@ -19,17 +19,15 @@ jobs:
         with:
           node-version: 24
 
-      - name: Deploy Preview
-        if: github.ref_name != 'main'
+      - name: Deploy to Vercel
         run: |
-          echo "DEPLOY_ENV=preview" >> $GITHUB_ENV
-          npx vercel --yes --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy Production
-        if: github.ref_name == 'main'
-        run: |
-          echo "DEPLOY_ENV=production" >> $GITHUB_ENV
-          npx vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "DEPLOY_ENV=production" >> $GITHUB_ENV
+            npx vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+          else
+            echo "DEPLOY_ENV=preview" >> $GITHUB_ENV
+            npx vercel --yes --token=${{ secrets.VERCEL_TOKEN }}
+          fi
 
       - name: Get Assigned Url
         run: |
@@ -44,14 +42,17 @@ jobs:
             | jq -r '.aliases[0] | .alias')
 
           for url in "${DEPLOY_URLS[@]}"; do
-            if [[ "$url" != *.vercel.app ]]; then
+            if [[ "$url" == *.vercel.app ]]; then
+              if [[ "$url" == *-git-* ]]; then
+                echo "DEPLOY_GIT_URL=$url" >> $GITHUB_ENV
+              else
+                echo "DEPLOY_PROJECT_URL=$url" >> $GITHUB_ENV
+              fi
+            else
+              # custom domain (non-vercel)
               if [[ "$url" != www.* ]]; then
                 echo "DEPLOY_CUSTOM_URL=$url" >> $GITHUB_ENV
               fi
-            elif [[ "$url" == *git-* ]]; then
-              echo "DEPLOY_GIT_URL=$url" >> $GITHUB_ENV
-            else
-              echo "DEPLOY_PROJECT_URL=$url" >> $GITHUB_ENV
             fi
           done
 
