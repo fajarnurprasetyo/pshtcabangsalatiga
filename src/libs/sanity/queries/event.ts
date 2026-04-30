@@ -1,11 +1,12 @@
 import type {
-    Event,
-    EventQueryResult,
-    EventsQueryResult,
+  Event,
+  EventQueryResult,
+  EventsQueryResult,
+  EventTitleQueryResult,
 } from "@/generated/types/sanity";
 import { groq } from "next-sanity";
 import z from "zod";
-import sanity from "./client";
+import client from "./client";
 
 export const EventsQuery = groq`
 *[
@@ -54,20 +55,17 @@ export async function fetchEvents<
   R extends FetchEventsResult = FetchEventsResult,
 >(options?: FetchEventsOptions) {
   const params = FetchEventsParamsSchema.parse(options);
-  return await sanity.fetch<R>(EventsQuery, params);
+  return await client.fetch<R>(EventsQuery, params);
 }
 
-export const EventNameQuery = groq`*[_type == "event" && slug.current == $slug][0].title`;
+export const EventTitleQuery = groq`*[_type == "event" && slug.current == $slug][0].title`;
 
-export async function fetchEventName(slug: string) {
-  return await sanity.fetch<string>(EventNameQuery, { slug });
+export async function fetchEventTitle(slug: string) {
+  return await client.fetch<EventTitleQueryResult>(EventTitleQuery, { slug });
 }
 
 export const EventQuery = groq`
-*[
-  _type == "event"
-  && slug.current == $slug
-][0]
+*[_type == "event" && slug.current == $slug][0]
 {
   _id,
   type,
@@ -85,5 +83,5 @@ export const EventQuery = groq`
 `;
 
 export async function fetchEvent(slug: string) {
-  return await sanity.fetch<EventQueryResult>(EventQuery, { slug });
+  return await client.fetch<EventQueryResult>(EventQuery, { slug });
 }

@@ -20,7 +20,7 @@ async function isAuthorized(session: Session, eventId: string) {
   const userId = session.user.id;
 
   const participated = await prisma.participant.findUnique({
-    where: { userId_targetId: { userId, targetId: eventId } },
+    where: { userId_postId: { userId, postId: eventId } },
   });
 
   return !!participated;
@@ -56,7 +56,7 @@ async function generatePdf(session: Session, eventId: string) {
   ctx.fillStyle = "#181818";
   ctx.fillText(name, WIDTH / 2, 552);
 
-  const title = `Sertifikat ${event.title ?? eventId} - ${name}`;
+  const title = `Sertifikat ${event.title || eventId} - ${name}`;
   const pdfStream = canvas.createPDFStream({
     title,
     author: "PSHT Cabang Salatiga",

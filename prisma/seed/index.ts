@@ -15,7 +15,7 @@ async function seed() {
       where: { username: ADMIN_USERNAME },
       update: {},
       create: {
-        name: ADMIN_NAME ?? "Admin",
+        name: ADMIN_NAME || "Admin",
         username: ADMIN_USERNAME,
         encryptedPassword: bcrypt.hashSync(ADMIN_PASSWORD, 12),
         roles: [UserRole.ADMIN],

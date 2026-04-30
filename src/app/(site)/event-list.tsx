@@ -24,10 +24,11 @@ export default function EventList(props: EventListProps) {
             <div className="relative aspect-video bg-gray-200 text-white border border-gray-300 rounded-lg shadow-md text-shadow-lg overflow-hidden">
               {event.thumbnail && (
                 <Image
-                  alt="Event thumbnail"
-                  src={urlFor(event.thumbnail).size(640, 360).url()}
                   width={640}
                   height={360}
+                  loading="eager"
+                  src={urlFor(event.thumbnail).size(640, 360).url()}
+                  alt="Event thumbnail"
                 />
               )}
               <div className="absolute flex w-full top-0 bg-gradient-to-b from-black/80 to-black/0 px-3 pb-3 pt-1">
