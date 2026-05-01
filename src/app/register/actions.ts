@@ -1,7 +1,7 @@
 "use server";
 
-import prisma from "@/libs/prisma";
-import { UsernameSchema, UserRegisterSchema } from "@/libs/shared/schemas/user";
+import prisma from "@/prisma";
+import { UsernameSchema, UserRegisterSchema } from "@/schemas/user";
 import bcrypt from "bcrypt";
 import type { ZodError } from "zod";
 

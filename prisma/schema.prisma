@@ -39,7 +39,7 @@ model User {
   phoneConfirmedAt       DateTime? @map("phone_confirmed_at")
 
   branch       Branch?       @relation(fields: [branchId], references: [id])
-  likes        Like[]
+  likes        PostLike[]
   particiption Participant[]
 
   createdAt DateTime  @default(now()) @map("created_at")
@@ -58,7 +58,7 @@ model Branch {
   deletedAt DateTime? @map("deleted_at")
 }
 
-model Like {
+model PostLike {
   userId String @map("user_id")
   postId String @map("post_id")
 
@@ -68,6 +68,14 @@ model Like {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@id([userId, postId])
+}
+
+model PostView {
+  postId String @id @map("post_id")
+  views  Int    @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 model Participant {

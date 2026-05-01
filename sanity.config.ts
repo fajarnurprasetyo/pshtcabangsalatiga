@@ -1,1 +1,1 @@
-export { default } from "./src/libs/sanity/config";
+export { default } from "./src/sanity/config";

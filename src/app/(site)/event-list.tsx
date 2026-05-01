@@ -1,11 +1,11 @@
 "use client";
 
-import { urlFor } from "@/libs/sanity/image";
+import { urlFor } from "@/sanity/image";
 import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
 import { use } from "react";
-import { FaClock, FaThumbsUp, FaUser } from "react-icons/fa6";
+import { FaCalendarCheck, FaEye, FaThumbsUp, FaUser } from "react-icons/fa6";
 import type { Data } from "./actions";
 
 export interface EventListProps {
@@ -36,10 +36,14 @@ export default function EventList(props: EventListProps) {
               </div>
               <div className="absolute flex w-full bottom-0 bg-gradient-to-t from-black/80 to-black/0 px-3 pb-0.5 pt-3 justify-between">
                 <div className="flex items-baseline">
-                  <FaClock className="mr-1 w-3 h-3" />
+                  <FaCalendarCheck className="mr-2 w-3 h-3" />
                   {dayjs(event.startDate).format("DD/MM/YYYY HH:mm")}
                 </div>
                 <div className="flex gap-3">
+                  <div className="flex items-baseline">
+                    {event.viewCount}
+                    <FaEye className="text-sm ml-2" />
+                  </div>
                   <div className="flex items-baseline">
                     {event.likeCount}
                     <FaThumbsUp className="text-sm ml-2" />

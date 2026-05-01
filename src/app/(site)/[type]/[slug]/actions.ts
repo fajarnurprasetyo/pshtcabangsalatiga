@@ -1,16 +1,16 @@
 "use server";
 
-import { authOptions } from "@/libs/next-auth";
-import prisma from "@/libs/prisma";
-import { fetchArticle } from "@/libs/sanity/queries";
-import { fetchEvent } from "@/libs/sanity/queries/event";
+import { authOptions } from "@/next-auth";
+import prisma from "@/prisma";
+import { fetchArticle } from "@/sanity/queries";
+import { fetchEvent } from "@/sanity/queries/event";
 import { getServerSession } from "next-auth";
 
 export async function getArticle(slug: string) {
   const data = await fetchArticle(slug);
   if (!data) return null;
 
-  const likes = await prisma.like.findMany({
+  const likes = await prisma.postLike.findMany({
     select: { userId: true, postId: true },
     where: { postId: data._id },
   });
@@ -18,13 +18,15 @@ export async function getArticle(slug: string) {
   return { ...data, likes };
 }
 
+export type Article = ReturnType<typeof getArticle>;
+
 export async function getEvent(slug: string) {
   const data = await fetchEvent(slug);
   if (!data) return null;
 
   const postId = data._id;
   const [likes, participants] = await Promise.all([
-    prisma.like.findMany({
+    prisma.postLike.findMany({
       select: { userId: true, postId: true },
       where: { postId },
     }),
@@ -37,29 +39,7 @@ export async function getEvent(slug: string) {
   return { ...data, likes, participants };
 }
 
-export async function updateLikeEvent(postId: string, like: boolean) {
-  const session = await getServerSession(authOptions);
-
-  if (session) {
-    const userId = session.user.id;
-    try {
-      if (like) {
-        await prisma.like.create({
-          data: { userId, postId },
-        });
-      } else {
-        await prisma.like.delete({
-          where: { userId_postId: { userId, postId } },
-        });
-      }
-      return like;
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  return !like;
-}
+export type Event = ReturnType<typeof getEvent>;
 
 export async function joinEvent(postId: string) {
   const session = await getServerSession(authOptions);
@@ -76,4 +56,36 @@ export async function joinEvent(postId: string) {
   }
 
   return false;
+}
+
+export async function updateLikeEvent(postId: string, like: boolean) {
+  const session = await getServerSession(authOptions);
+
+  if (session) {
+    const userId = session.user.id;
+    try {
+      if (like) {
+        await prisma.postLike.create({
+          data: { userId, postId },
+        });
+      } else {
+        await prisma.postLike.delete({
+          where: { userId_postId: { userId, postId } },
+        });
+      }
+      return like;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  return !like;
+}
+
+export async function updatePostView(postId: string) {
+  await prisma.postView.upsert({
+    where: { postId },
+    create: { postId, views: 1 },
+    update: { views: { increment: 1 } },
+  });
 }

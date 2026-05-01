@@ -1,20 +1,20 @@
 "use client";
 
 import { UserRole, type Branch } from "@/generated/prisma/browser";
-import { UsernameSchema } from "@/libs/shared/schemas/user";
+import { UsernameSchema } from "@/schemas/user";
 import {
-  Combobox,
-  ComboboxInput,
-  ComboboxOption,
-  ComboboxOptions,
+    Combobox,
+    ComboboxInput,
+    ComboboxOption,
+    ComboboxOptions,
 } from "@headlessui/react";
 import {
-  Button,
-  ButtonGroup,
-  HelperText,
-  HR,
-  Label,
-  TextInput,
+    Button,
+    ButtonGroup,
+    HelperText,
+    HR,
+    Label,
+    TextInput,
 } from "flowbite-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";

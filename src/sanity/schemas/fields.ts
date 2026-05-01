@@ -1,41 +1,36 @@
-import { defineField, defineType } from "sanity";
+import { defineField, type FieldDefinition } from "sanity";
 
-export default defineType({
-  name: "article",
-  type: "document",
-  title: "Article",
-  fields: [
+export function postFields(insert: FieldDefinition[] = [], index: number = 4) {
+  const fields = [
     defineField({
-      name: "title",
       type: "string",
-      title: "Title",
+      name: "title",
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "slug",
       type: "slug",
+      name: "slug",
       options: { source: "title" },
-      title: "Slug",
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "thumbnail",
       type: "image",
-      title: "Thumbnail",
+      name: "thumbnail",
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "date",
       type: "datetime",
+      name: "date",
       title: "Publish Date",
       initialValue: () => new Date().toISOString(),
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "content",
       type: "array",
-      title: "Content",
+      name: "content",
       of: [{ type: "block" }],
     }),
-  ],
-});
+  ];
+
+  return [...fields.slice(0, index), ...insert, ...fields.slice(index)];
+}

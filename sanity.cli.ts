@@ -3,7 +3,7 @@
  * Go to https://www.sanity.io/docs/cli to learn more.
  **/
 import { defineCliConfig } from "sanity/cli";
-import options from "./src/libs/sanity/options";
+import options from "./src/sanity/options";
 
 const BASE_PATH = "./src/generated/types";
 const SCHEMA_PATH = `${BASE_PATH}/sanity.json`;
