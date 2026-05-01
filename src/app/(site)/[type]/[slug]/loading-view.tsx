@@ -4,10 +4,10 @@ import { useMemo } from "react";
 import { PostType } from "../";
 
 export interface PostLoadingPageProps {
-  type: PostType;
+  type: string;
 }
 
-export default function PostLoadingPage({ type }: PostLoadingPageProps) {
+export default function PostLoadingView({ type }: PostLoadingPageProps) {
   const isEvent = type === PostType.event;
 
   const fakeTitle = useMemo(() => {

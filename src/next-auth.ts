@@ -1,8 +1,15 @@
-import { InvalidCredentials, UserNotFound } from "@/libs/shared/auth-error";
 import bcrypt from "bcrypt";
 import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "./prisma";
+
+export class UserNotFound extends Error {
+  constructor(public username: string) {
+    super(`User with username '${username}' not found.`);
+  }
+}
+
+export class InvalidCredentials extends Error {}
 
 export const authOptions: NextAuthOptions = {
   pages: {

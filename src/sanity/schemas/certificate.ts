@@ -4,13 +4,11 @@ import { apiVersion } from "../env";
 export default defineType({
   name: "certificate",
   type: "document",
-  title: "Certificate",
   fields: [
     defineField({
-      name: "event",
       type: "reference",
+      name: "event",
       to: [{ type: "event" }],
-      title: "Event",
       validation: (rule) =>
         rule.custom(async (eventRef, context) => {
           if (!eventRef) return "Required";
@@ -34,9 +32,8 @@ export default defineType({
         }),
     }),
     defineField({
-      name: "image",
       type: "image",
-      title: "Image",
+      name: "image",
       validation: (rule) => rule.required(),
     }),
   ],

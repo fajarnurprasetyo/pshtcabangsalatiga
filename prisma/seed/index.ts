@@ -1,6 +1,6 @@
 import { UserRole } from "@/generated/prisma/enums";
+import prisma from "@/prisma";
 import bcrypt from "bcrypt";
-import prisma from "../../src/libs/prisma";
 import branch from "./branch.json";
 
 async function seed() {

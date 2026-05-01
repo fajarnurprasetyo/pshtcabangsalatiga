@@ -1,7 +1,7 @@
-import { authOptions } from "@/libs/next-auth";
-import prisma from "@/libs/prisma";
-import { urlFor } from "@/libs/sanity/image";
-import { fetchCertificate } from "@/libs/sanity/queries/certificate";
+import { authOptions } from "@/next-auth";
+import prisma from "@/prisma";
+import { urlFor } from "@/sanity/image";
+import { fetchCertificate } from "@/sanity/queries/certificate";
 import { createCanvas, loadImage, registerFont } from "canvas";
 import dayjs from "dayjs";
 import { getServerSession, type Session } from "next-auth";

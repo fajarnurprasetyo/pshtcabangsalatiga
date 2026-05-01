@@ -1,6 +1,6 @@
 "use client";
 
-import { urlFor } from "@/libs/sanity/image";
+import { urlFor } from "@/sanity/image";
 import type { PropsWithNullableSession } from "@/types/react";
 import dayjs from "dayjs";
 import Image from "next/image";
@@ -9,6 +9,7 @@ import { notFound, usePathname } from "next/navigation";
 import { use } from "react";
 import { FaHouse, FaShare, FaThumbsUp } from "react-icons/fa6";
 import type { getArticle } from "./actions";
+import { useViewUpdater } from "./hooks";
 
 export type ArticleViewProps = PropsWithNullableSession<{
   article: ReturnType<typeof getArticle>;
@@ -17,6 +18,7 @@ export type ArticleViewProps = PropsWithNullableSession<{
 export default function ArticleView(props: ArticleViewProps) {
   const article = use(props.article);
   if (!article) notFound();
+  useViewUpdater(article._id);
 
   const pathname = usePathname();
 

@@ -8,8 +8,16 @@ export type PagesLayoutProps = PropsWithChildren<{
 
 export const PostTypes = [PostType.article, PostType.event] as string[];
 
-export default async function PagesLayout(props: PagesLayoutProps) {
-  const { type } = await props.params;
+export default async function PagesLayout({
+  params,
+  children,
+}: PagesLayoutProps) {
+  const { type } = await params;
   if (!PostTypes.includes(type)) notFound();
-  return props.children;
+
+  return (
+    <div className="flex flex-col w-full max-w-7xl px-2 py-4 md:px-4 md:py-6 self-center">
+      {children}
+    </div>
+  );
 }

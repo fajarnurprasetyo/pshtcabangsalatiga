@@ -3,7 +3,7 @@
 import useDownloadCertificateModal from "@/hooks/modals/useDownloadCertificateModal";
 import useLoginUrl from "@/hooks/useLoginUrl";
 import useSession from "@/hooks/useSession";
-import { urlFor } from "@/libs/sanity/image";
+import { urlFor } from "@/sanity/image";
 import type { PropsWithNullableSession } from "@/types/react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
@@ -24,6 +24,7 @@ import {
 } from "react-icons/fa6";
 import { useBoolean } from "react-use";
 import { joinEvent, updateLikeEvent, type getEvent } from "./actions";
+import { useViewUpdater } from "./hooks";
 
 dayjs.locale("id");
 
@@ -34,6 +35,7 @@ export type EventViewProps = PropsWithNullableSession<{
 export default function EventView(props: EventViewProps) {
   const event = use(props.event);
   if (!event) notFound();
+  useViewUpdater(event._id);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -123,7 +125,7 @@ export default function EventView(props: EventViewProps) {
             </Link>
           </div>
           <div className="text-sm text-gray-700">
-            {dayjs(event.date).format("dddd, D MMMM YYYY HH:MM WIB")}
+            pshtcabangsalatiga | {dayjs(event.date).format("MMM D, YYYY")}
           </div>
         </div>
         <div className="flex gap-2 justify-end">
@@ -163,7 +165,7 @@ export default function EventView(props: EventViewProps) {
         <div className="flex flex-col gap-1">
           <div className="flex items-center">
             <FaRegCalendarCheck className="mr-2" />
-            {dayjs(event.startDate).format("DD MMMM YYYY HH:MM WIB")}
+            {dayjs(event.startDate).format("DD MMMM YYYY HH:mm [WIB]")}
           </div>
         </div>
         {!eventStarted && (
