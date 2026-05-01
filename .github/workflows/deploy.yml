@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - staging
       - feat/**
       - fix/**
       - hotfix/**
@@ -26,13 +25,14 @@ jobs:
       - name: Deploy to Vercel
         run: |
           if [ "${{ github.ref_name }}" = "main" ]; then
-            echo "DEPLOY_ENV=Production" >> $GITHUB_ENV
-            echo "DEPLOY_DOMAIN=pshtcabangsalatiga.vercel.app" >> $GITHUB_ENV
             npx vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
-          else
-            echo "DEPLOY_ENV=Preview" >> $GITHUB_ENV
+            echo "DEPLOY_ENV=Production" >> $GITHUB_ENV
             echo "DEPLOY_DOMAIN=pshtcabangsalatiga.or.id" >> $GITHUB_ENV
-            npx vercel --yes --token=${{ secrets.VERCEL_TOKEN }}
+          else
+            DEPLOY_URL=$(npx vercel --yes --token=${{ secrets.VERCEL_TOKEN }})
+            vercel alias $DEPLOY_URL pshtcabangsalatiga.vercel.app --token=${{ secrets.VERCEL_TOKEN }}
+            echo "DEPLOY_ENV=Preview" >> $GITHUB_ENV
+            echo "DEPLOY_DOMAIN=pshtcabangsalatiga.vercel.app" >> $GITHUB_ENV
           fi
 
       - name: Send email
