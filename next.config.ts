@@ -2,6 +2,7 @@ import withFlowbiteReact from "flowbite-react/plugin/nextjs";
 
 export default withFlowbiteReact({
   reactCompiler: true,
+  cacheComponents: true,
   images: {
     remotePatterns: [
       {
@@ -13,6 +14,11 @@ export default withFlowbiteReact({
   },
   redirects() {
     return [
+      {
+        source: "/admin",
+        destination: "/admin/sanity-studio",
+        permanent: false,
+      },
       {
         source: "/article/:slug*",
         destination: "/artikel/:slug*",

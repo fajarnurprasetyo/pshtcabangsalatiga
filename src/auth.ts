@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import type { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "./prisma";
 
@@ -11,7 +11,8 @@ export class UserNotFound extends Error {
 
 export class InvalidCredentials extends Error {}
 
-export const authOptions: NextAuthOptions = {
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   pages: {
     signIn: "/login",
   },
@@ -28,37 +29,37 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(cred) {
-        if (cred) {
-          const user = await prisma.user.findUnique({
-            where: { username: cred.username, deletedAt: null },
-            include: { branch: true },
-          });
+        const user = await prisma.user.findUnique({
+          where: { username: cred.username as string, deletedAt: null },
+          include: { branch: true },
+        });
 
-          if (!user) {
-            throw new UserNotFound(cred.username);
-          }
-
-          const { encryptedPassword, ...publicUser } = user;
-
-          if (!bcrypt.compareSync(cred.password, encryptedPassword)) {
-            throw new InvalidCredentials();
-          }
-
-          return publicUser;
+        if (!user) {
+          throw new UserNotFound(cred.username as string);
         }
 
-        return null;
+        const { encryptedPassword, ...publicUser } = user;
+
+        if (!bcrypt.compareSync(cred.password as string, encryptedPassword)) {
+          throw new InvalidCredentials();
+        }
+
+        return publicUser;
       },
     }),
   ],
   callbacks: {
     jwt({ token, user }) {
+      // TODO: Fix AdapterUser handling
+      // @ts-expect-error: ignore
       if (user) token.user = user;
       return token;
     },
     session({ session, token }) {
+      // TODO: Fix email and emailVerified property
+      // @ts-expect-error: ignore
       if (token.user) session.user = token.user;
       return session;
     },
   },
-};
+});

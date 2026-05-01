@@ -1,38 +1,17 @@
 import type { Session } from "next-auth";
-import {
-  useSession as use,
-  type UseSessionOptions as Options,
-  type SessionContextValue,
-} from "next-auth/react";
+import { useSession as use } from "next-auth/react";
 import { useEffect, useRef } from "react";
 
-export type UseSessionOptions<R extends boolean> = Options<R> & {
+export interface UseSessionOptions {
   onSignIn?: (session: Session) => void;
   onSignOut?: () => void;
-};
+}
 
-export default function useSession<R extends boolean>(
-  options?: UseSessionOptions<R>,
-): SessionContextValue<R>;
-export default function useSession<R extends boolean>(
+export default function useSession(
   serverSession: Session | null,
-  options?: UseSessionOptions<R>,
-): SessionContextValue<R>;
-export default function useSession<R extends boolean>(
-  arg_0?: UseSessionOptions<R> | Session | null,
-  arg_1?: UseSessionOptions<R>,
+  options: UseSessionOptions,
 ) {
-  let serverSession: Session | null | undefined;
-  let options: UseSessionOptions<R> | undefined;
-
-  if (arg_0 && "required" in arg_0) {
-    options = arg_0;
-  } else {
-    serverSession = arg_0 as Session | null;
-    options = arg_1;
-  }
-
-  const sessionState = use(options);
+  const sessionState = use();
 
   const data =
     sessionState.data !== undefined ? sessionState.data : serverSession;

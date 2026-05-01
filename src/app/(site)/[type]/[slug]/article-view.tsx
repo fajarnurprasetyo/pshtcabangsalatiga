@@ -18,22 +18,22 @@ export type ArticleViewProps = PropsWithNullableSession<{
 export default function ArticleView(props: ArticleViewProps) {
   const article = use(props.article);
   if (!article) notFound();
-  useViewUpdater(article._id);
+  useViewUpdater("article", article._id);
 
   const pathname = usePathname();
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
-      <div className="text-2xl font-semibold text-center">{article.title}</div>
+      <div className="font-semibold text-2xl text-center">{article.title}</div>
 
-      <div className="flex items-end justify-between">
+      <div className="flex justify-between items-end">
         <div className="flex flex-col gap-1">
-          <div className="flex gap-1 items-center">
+          <div className="flex items-center gap-1">
             <Link href="/" className="font-semibold text-blue-600">
               <FaHouse />
             </Link>
           </div>
-          <div className="text-sm text-gray-700">
+          <div className="text-gray-700 text-sm">
             {dayjs(article.date).format("dddd, D MMMM YYYY HH:MM WIB")}
           </div>
         </div>
@@ -48,7 +48,7 @@ export default function ArticleView(props: ArticleViewProps) {
             <FaThumbsUp />
           </button>
           <button
-            className="flex items-center justify-center size-8 md:size-9 border border-primary text-primary rounded-full"
+            className="flex justify-center items-center border border-primary rounded-full size-8 md:size-9 text-primary"
             onClick={() =>
               navigator.share({
                 title: article.title || pathname,
@@ -66,7 +66,7 @@ export default function ArticleView(props: ArticleViewProps) {
           width={1920}
           height={1080}
           loading="eager"
-          className="w-full aspect-video rounded-md"
+          className="rounded-md w-full aspect-video"
           src={urlFor(article.thumbnail).url()}
           alt="Event thumbnail"
         />

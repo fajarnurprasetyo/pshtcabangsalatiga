@@ -3,22 +3,22 @@
 import { UserRole, type Branch } from "@/generated/prisma/browser";
 import { UsernameSchema } from "@/schemas/user";
 import {
-    Combobox,
-    ComboboxInput,
-    ComboboxOption,
-    ComboboxOptions,
+  Combobox,
+  ComboboxInput,
+  ComboboxOption,
+  ComboboxOptions,
 } from "@headlessui/react";
 import {
-    Button,
-    ButtonGroup,
-    HelperText,
-    HR,
-    Label,
-    TextInput,
+  Button,
+  HelperText,
+  HR,
+  Label,
+  Radio,
+  TextInput,
 } from "flowbite-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { use, useRef, useState, type SubmitEvent } from "react";
+import { Suspense, useRef, useState, type SubmitEvent } from "react";
 import { FaCheck, FaSpinner, FaXmark } from "react-icons/fa6";
 import { useBoolean, useDebounce, useToggle } from "react-use";
 import { checkUsername, findBranch, register } from "./actions";
@@ -52,13 +52,11 @@ function generateUsername(name: string) {
 //   return "bg-green-500";
 // }
 
-export interface RegisterPageProps {
-  searchParams: Promise<{ callbackUrl?: string }>;
+interface FromProps {
+  callbackUrl?: string;
 }
 
-export default function RegisterPage(props: RegisterPageProps) {
-  const { callbackUrl = "/" } = use(props.searchParams);
-
+function Form({ callbackUrl }: FromProps) {
   const [username, setUsername] = useState("");
   const [usernameUserChanged, setUsernameUserChanged] = useBoolean(false);
   const [usernameChecking, setUsernameChecking] = useBoolean(false);
@@ -151,256 +149,236 @@ export default function RegisterPage(props: RegisterPageProps) {
   };
 
   return (
-    <div className="flex justify-center">
-      <main className="max-w-2xl w-full px-8 sm:px-16 py-10 sm:py-16">
-        <h1 className="text-3xl font-semibold text-center select-none">
-          Daftar
-        </h1>
+    <form
+      autoComplete="off"
+      className="flex flex-col gap-4"
+      onSubmit={handleSubmit}
+    >
+      <TextInput
+        required
+        autoFocus
+        type="text"
+        name="name"
+        autoComplete="off"
+        placeholder="Nama Lengkap"
+        value={name}
+        onChange={({ target }) => {
+          setName(target.value);
+          if (!usernameUserChanged) {
+            const username = generateUsername(target.value);
+            setUsername(username);
+            setUsernameChecking(UsernameSchema.safeParse(username).success);
+          }
+        }}
+      />
 
-        <HR />
-
-        <form
+      <div>
+        <TextInput
+          required
+          type="text"
+          name="username"
           autoComplete="off"
-          className="flex flex-col gap-4"
-          onSubmit={handleSubmit}
-        >
-          {/* Full Name */}
-          <div>
-            <Label htmlFor="input-name" className="block mb-2">
-              Nama Lengkap
-            </Label>
-            <TextInput
-              required
-              id="input-name"
-              name="name"
-              autoComplete="off"
-              type="text"
-              placeholder="John Doe"
-              value={name}
-              onChange={({ target }) => {
-                setName(target.value);
-                if (!usernameUserChanged) {
-                  const username = generateUsername(target.value);
-                  setUsername(username);
-                  setUsernameChecking(
-                    UsernameSchema.safeParse(username).success,
-                  );
-                }
-              }}
-            />
-          </div>
-
-          {/* Username */}
-          <div>
-            <Label
-              htmlFor="input-username"
-              color={usernameValid && usernameAvailable ? "default" : "failure"}
-              className="block mb-2"
-            >
-              Nama Pengguna
-            </Label>
-            <div className="relative">
-              <TextInput
-                required
-                id="input-username"
-                name="username"
-                autoComplete="off"
-                type="text"
-                placeholder="johndoe"
-                color={usernameValid && usernameAvailable ? "gray" : "failure"}
-                value={username}
-                onChange={({ target }) => {
-                  setUsername(target.value);
-                  setUsernameUserChanged(true);
-                  setUsernameChecking(
-                    UsernameSchema.safeParse(target.value).success,
-                  );
-                }}
+          color={usernameValid && usernameAvailable ? "gray" : "failure"}
+          placeholder="Nama Pengguna"
+          rightIcon={(props) =>
+            usernameChecking ? (
+              <FaSpinner
+                {...props}
+                className={`${props.className} animate-spin`}
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {usernameChecking ? (
-                  <FaSpinner className="animate-spin" />
-                ) : !usernameValid || !usernameAvailable ? (
-                  <FaXmark className="text-red-600" />
-                ) : (
-                  username && <FaCheck className="text-green-500" />
-                )}
-              </div>
-            </div>
-            {usernameHelperText && (
-              <HelperText>{usernameHelperText}</HelperText>
-            )}
-          </div>
+            ) : !usernameValid || !usernameAvailable ? (
+              <FaXmark
+                {...props}
+                className={`${props.className} text-red-500`}
+              />
+            ) : (
+              username && (
+                <FaCheck
+                  {...props}
+                  className={`${props.className} text-green-500`}
+                />
+              )
+            )
+          }
+          value={username}
+          onChange={({ target }) => {
+            setUsername(target.value);
+            setUsernameUserChanged(true);
+            setUsernameChecking(UsernameSchema.safeParse(target.value).success);
+          }}
+        />
+        {usernameHelperText && (
+          <HelperText className="mt-1">{usernameHelperText}</HelperText>
+        )}
+      </div>
 
-          {/* Password */}
-          <div>
-            <Label
-              htmlFor="input-password"
-              color={passwordError ? "failure" : "default"}
-              className="block mb-2"
-            >
-              Kata Sandi
-            </Label>
-            <TextInput
+      <div>
+        <TextInput
+          required
+          type={showPassword ? "text" : "password"}
+          name="password"
+          autoComplete="new-password"
+          color={
+            password.length > 0 && password.length < 8 ? "failure" : "gray"
+          }
+          placeholder="Kata Sandi"
+          value={password}
+          onChange={({ target }) => setPassword(target.value)}
+        />
+        {passwordError && (
+          <HelperText className="mt-1">
+            Kata sandi minimal 8 karakter
+          </HelperText>
+        )}
+      </div>
+
+      <div>
+        <Combobox
+          value={branch}
+          onChange={setBranch}
+          onClose={() => setBranchQuery("")}
+        >
+          <div className="relative">
+            <input hidden name="branch-id" defaultValue={branch?.id} />
+
+            <ComboboxInput
               required
-              id="input-password"
-              type={showPassword ? "text" : "password"}
-              name="password"
-              autoComplete="new-password"
-              color={
-                password.length > 0 && password.length < 8 ? "failure" : "gray"
-              }
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
+              autoComplete="off"
+              placeholder="Cabang"
+              displayValue={(branch: Branch | null) => branch?.name || ""}
+              onChange={({ target }) => {
+                setBranch(null);
+                setBranchQuery(target.value);
+                setBranchOptionsLoading(true);
+              }}
+              className="block bg-gray-50 disabled:opacity-50 p-2.5 border border-gray-300 focus:border-primary-500 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 w-full text-gray-900 text-sm disabled:cursor-not-allowed placeholder-gray-500"
             />
-            {passwordError && (
-              <HelperText>Kata sandi minimal 8 karakter</HelperText>
+
+            {branchOptionsLoading && (
+              <FaSpinner className="top-1/2 right-3 absolute -translate-y-1/2 animate-spin pointer-events-none" />
             )}
-          </div>
 
-          {/* Branch */}
-          <div>
-            <Combobox
-              value={branch}
-              onChange={setBranch}
-              onClose={() => setBranchQuery("")}
-            >
-              <Label htmlFor="input-branch" className="block mb-2">
-                Cabang
-              </Label>
-              <div className="relative">
-                <input
-                  hidden
-                  name="branch-id"
-                  type="hidden"
-                  defaultValue={branch?.id}
-                />
-                <ComboboxInput
-                  required
-                  id="input-branch"
-                  autoComplete="off"
-                  placeholder="Salatiga"
-                  displayValue={(branch: Branch | null) => branch?.name || ""}
-                  onChange={({ target }) => {
-                    setBranch(null);
-                    setBranchQuery(target.value);
-                    setBranchOptionsLoading(true);
-                  }}
-                  className="block w-full border focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-500 focus:border-primary-500 focus:ring-primary-500 p-2.5 text-sm rounded-lg"
-                />
+            {branchQuery && (
+              <ComboboxOptions className="z-10 absolute bg-white shadow-lg mt-1 rounded-lg w-full overflow-hidden text-sm">
+                <div className="max-h-60 overflow-x-hidden overflow-y-auto">
+                  {branchOptions.length === 0 && (
+                    <div className="px-2.5 py-2 text-gray-500">
+                      {branchOptionsLoading
+                        ? "Memuat..."
+                        : "Data tidak ditemukan"}
+                    </div>
+                  )}
 
-                {branchOptionsLoading && (
-                  <FaSpinner className="absolute animate-spin right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                )}
-
-                {branchQuery && (
-                  <ComboboxOptions className="absolute z-10 mt-1 w-full rounded-lg bg-white text-sm shadow-lg overflow-hidden">
-                    <div className="max-h-60 overflow-y-auto overflow-x-hidden">
-                      {branchOptions.length === 0 && (
-                        <div className="px-2.5 py-2 text-gray-500">
-                          {branchOptionsLoading
-                            ? "Memuat..."
-                            : "Data tidak ditemukan"}
+                  {branchOptions.map((branch) => (
+                    <ComboboxOption key={branch.id} value={branch}>
+                      {({ focus, disabled, selected }) => (
+                        <div
+                          className={`flex px-2.5 py-2 align-center gap-1 cursor-default ${
+                            disabled
+                              ? "text-gray-500"
+                              : focus
+                                ? "bg-gray-200"
+                                : ""
+                          }`}
+                        >
+                          <div className="font-bold">
+                            {`${branch.id}`.padStart(3, "0")}
+                          </div>
+                          <div className="flex-1">{branch.name}</div>
+                          {selected && <FaCheck />}
                         </div>
                       )}
-
-                      {branchOptions.map((branch) => (
-                        <ComboboxOption key={branch.id} value={branch}>
-                          {({ focus, disabled, selected }) => (
-                            <div
-                              className={`flex px-2.5 py-2 align-center gap-1 cursor-default ${
-                                disabled
-                                  ? "text-gray-500"
-                                  : focus
-                                    ? "bg-gray-200"
-                                    : ""
-                              }`}
-                            >
-                              <div className="font-bold">
-                                {`${branch.id}`.padStart(3, "0")}
-                              </div>
-                              <div className="flex-1">{branch.name}</div>
-                              {selected && <FaCheck />}
-                            </div>
-                          )}
-                        </ComboboxOption>
-                      ))}
-                    </div>
-                  </ComboboxOptions>
-                )}
-              </div>
-            </Combobox>
+                    </ComboboxOption>
+                  ))}
+                </div>
+              </ComboboxOptions>
+            )}
           </div>
+        </Combobox>
+      </div>
 
-          {/* Sub-branch */}
-          <div>
-            <Label htmlFor="input-sub-branch" className="block mb-2">
-              Ranting
-            </Label>
-            <TextInput
-              id="input-sub-branch"
-              type="text"
-              name="sub-branch"
-              autoComplete="off"
-              placeholder="Tengaran"
-            />
-          </div>
+      <div>
+        <TextInput
+          type="text"
+          name="sub-branch"
+          autoComplete="off"
+          placeholder="Ranting"
+        />
+      </div>
 
-          {/* Role */}
-          <div>
-            <Label className="block mb-2">Status Keanggotaan</Label>
-            <input hidden name="role" type="hidden" defaultValue={role} />
-            <ButtonGroup className="w-full">
-              {[
-                { role: UserRole.SISWA, label: "Siswa" },
-                { role: UserRole.WARGA, label: "Warga" },
-              ].map((item) => (
-                <Button
-                  key={item.role}
-                  size="sm"
-                  className="flex-1 focus:ring-0"
-                  onClick={() => setRole(item.role)}
-                  color={item.role === role ? "default" : "alternative"}
-                >
-                  {item.label}
-                </Button>
-              ))}
-            </ButtonGroup>
-          </div>
-
-          <Button
-            type="submit"
-            className="mt-3"
-            disabled={
-              name.length < 3 ||
-              !username ||
-              !usernameValid ||
-              !usernameAvailable ||
-              password.length < 8 ||
-              !branch ||
-              loading
-            }
-          >
-            {loading ? <FaSpinner className="animate-spin" /> : "Daftar"}
-          </Button>
-        </form>
-
-        <div className="flex items-center gap-4">
-          <HR className="flex-1" />
-          <span className="text-sm select-none">atau</span>
-          <HR className="flex-1" />
+      <div>
+        <Label className="block mb-2">Status Keanggotaan</Label>
+        <div className="flex gap-4">
+          {[
+            { value: UserRole.SISWA, label: "Siswa" },
+            { value: UserRole.WARGA, label: "Warga" },
+          ].map((item) => (
+            <div key={item.value} className="flex items-center gap-2">
+              <Radio
+                id={`user-role-${item.value}`}
+                name="role"
+                value={item.value}
+                checked={item.value === role}
+                onClick={() => setRole(item.value)}
+              />
+              <Label htmlFor={`user-role-${item.value}`}>{item.label}</Label>
+            </div>
+          ))}
         </div>
+      </div>
 
-        <p className="text-sm text-center select-none">
-          Sudah punya akun?&nbsp;
-          <Link
-            href={`/login?callbackUrl=${callbackUrl}`}
-            className="font-medium text-blue-600 hover:underline"
-          >
-            Masuk
-          </Link>
-        </p>
-      </main>
-    </div>
+      <Button
+        type="submit"
+        disabled={
+          name.length < 3 ||
+          !username ||
+          !usernameValid ||
+          !usernameAvailable ||
+          password.length < 8 ||
+          !branch ||
+          loading
+        }
+      >
+        {loading ? <FaSpinner className="animate-spin" /> : "Daftar"}
+      </Button>
+    </form>
+  );
+}
+
+export interface RegisterPageProps {
+  searchParams: Promise<FromProps>;
+}
+
+export default function RegisterPage({ searchParams }: RegisterPageProps) {
+  return (
+    <Suspense>
+      {searchParams.then(({ callbackUrl }) => (
+        <main className="self-center px-8 sm:px-16 py-10 sm:py-16 w-full max-w-2xl">
+          <h1 className="font-semibold text-3xl text-center select-none">
+            Daftar
+          </h1>
+
+          <HR />
+
+          <Form callbackUrl={callbackUrl} />
+
+          <div className="flex items-center gap-4">
+            <HR className="flex-1" />
+            <span className="text-sm select-none">atau</span>
+            <HR className="flex-1" />
+          </div>
+
+          <p className="text-sm text-center select-none">
+            Sudah punya akun?&nbsp;
+            <Link
+              href={`/login?callbackUrl=${callbackUrl}`}
+              className="font-medium text-primary-700 hover:underline"
+            >
+              Masuk
+            </Link>
+          </p>
+        </main>
+      ))}
+    </Suspense>
   );
 }

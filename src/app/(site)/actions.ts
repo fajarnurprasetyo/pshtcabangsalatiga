@@ -3,9 +3,14 @@
 import type { Event } from "@/generated/types/sanity";
 import prisma from "@/prisma";
 import { fetchEvents } from "@/sanity/queries/event";
+import { cacheTag } from "next/cache";
 
-export async function fetchData(type: Required<Event["type"]>) {
-  const events = await fetchEvents({ type: type, take: 3 });
+export async function getEvents(type: NonNullable<Event["type"]>) {
+  "use cache";
+
+  const events = await fetchEvents({ type, take: 3 });
+  cacheTag("event", ...events.map((event) => `event:${event._id}`));
+
   return Promise.all(
     events.map(async (data) => {
       const postId = data._id;
@@ -23,4 +28,4 @@ export async function fetchData(type: Required<Event["type"]>) {
   );
 }
 
-export type Data = NonNullable<Awaited<ReturnType<typeof fetchData>>>;
+export type Events = ReturnType<typeof getEvents>;

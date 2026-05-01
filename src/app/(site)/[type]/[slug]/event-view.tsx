@@ -7,6 +7,7 @@ import { urlFor } from "@/sanity/image";
 import type { PropsWithNullableSession } from "@/types/react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
+import { Button } from "flowbite-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect, usePathname, useRouter } from "next/navigation";
@@ -23,7 +24,7 @@ import {
   FaUserPlus,
 } from "react-icons/fa6";
 import { useBoolean } from "react-use";
-import { joinEvent, updateLikeEvent, type getEvent } from "./actions";
+import { joinEvent, updateLikePost, type getEvent } from "./actions";
 import { useViewUpdater } from "./hooks";
 
 dayjs.locale("id");
@@ -35,7 +36,7 @@ export type EventViewProps = PropsWithNullableSession<{
 export default function EventView(props: EventViewProps) {
   const event = use(props.event);
   if (!event) notFound();
-  useViewUpdater(event._id);
+  useViewUpdater("event", event._id);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -60,10 +61,7 @@ export default function EventView(props: EventViewProps) {
       ? now.startOf("day").isAfter(finishDate.startOf("day"))
       : now.isAfter(finishDate));
 
-  console.log(now.toISOString(), finishDate.toISOString());
-
   const { data: session } = useSession(props.session, {
-    required: false,
     onSignIn({ user: { id } }) {
       setLiked(event.likes.some(({ userId }) => userId === id));
       setJoined(event.participants.some(({ userId }) => userId === id));
@@ -82,7 +80,7 @@ export default function EventView(props: EventViewProps) {
 
     const next = !liked;
     setLiked(next);
-    const update = await updateLikeEvent(event._id, next);
+    const update = await updateLikePost("event", event._id, next);
 
     if (update !== next) setLiked(update);
     else router.refresh();
@@ -107,46 +105,48 @@ export default function EventView(props: EventViewProps) {
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
-      <div className="text-2xl font-semibold text-center">{event.title}</div>
+      <div className="font-semibold text-2xl text-center">{event.title}</div>
 
-      <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-0 items-stretch md:items-center justify-between">
+      <div className="flex md:flex-row flex-col-reverse justify-between items-stretch md:items-center gap-4 md:gap-0">
         <div className="flex flex-col gap-1">
-          <div className="flex gap-1 items-center">
-            <Link href="/" className="font-semibold text-blue-600">
+          <div className="flex items-center gap-1">
+            <Link href="/" className="font-semibold text-primary-700">
               <FaHouse />
             </Link>
             <FaChevronRight />
             <Link
               // `/event?t=${event.type}`
               href="#"
-              className="font-semibold text-blue-600"
+              className="font-semibold text-primary-700"
             >
               {event.type === "seminar" ? "Seminar" : "Kompetisi"}
             </Link>
           </div>
-          <div className="text-sm text-gray-700">
+          <div className="text-gray-700 text-sm">
             pshtcabangsalatiga | {dayjs(event.date).format("MMM D, YYYY")}
           </div>
         </div>
-        <div className="flex gap-2 justify-end">
-          <button
+        <div className="flex justify-end gap-2">
+          <Button
+            pill
             onClick={handleLike}
-            className={`flex items-center justify-center size-8 md:size-9 border border-primary ${
+            className={`p-0 border border-primary-700 focus:ring-0 size-8 md:size-9 ${
               liked
-                ? "bg-primary hover:bg-primary-800 text-white"
-                : "hover:bg-primary-200 text-primary"
-            } rounded-full`}
+                ? "bg-primary-700 hover:bg-primary-900 text-white"
+                : "bg-white hover:bg-primary-200 text-primary-700"
+            }`}
           >
             <FaThumbsUp />
-          </button>
-          <button
-            className="flex items-center justify-center size-8 md:size-9 border border-primary text-primary rounded-full"
+          </Button>
+          <Button
+            pill
+            className="bg-white hover:bg-primary-200 p-0 border border-primary-700 focus:ring-0 size-8 md:size-9 text-primary-700"
             onClick={() =>
               navigator.share({ title: event.title || pathname, url: pathname })
             }
           >
             <FaShare />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -155,13 +155,13 @@ export default function EventView(props: EventViewProps) {
           width={1920}
           height={1080}
           loading="eager"
-          className="w-full aspect-video rounded-md"
+          className="rounded-md w-full aspect-video"
           src={urlFor(event.thumbnail).url()}
           alt="Event thumbnail"
         />
       )}
 
-      <div className="flex flex-col sm:flex-row gap-2 md:gap-0 items-center md:items-start justify-between">
+      <div className="flex sm:flex-row flex-col justify-between items-center md:items-start gap-2 md:gap-0">
         <div className="flex flex-col gap-1">
           <div className="flex items-center">
             <FaRegCalendarCheck className="mr-2" />
@@ -169,11 +169,7 @@ export default function EventView(props: EventViewProps) {
           </div>
         </div>
         {!eventStarted && (
-          <button
-            onClick={handleJoin}
-            disabled={joinPending}
-            className="h-9 md:h-10 px-4 bg-primary text-white rounded-full"
-          >
+          <Button pill onClick={handleJoin} disabled={joinPending}>
             <div className="mr-2">
               {joinPending ? (
                 <FaSpinner className="animate-spin" />
@@ -184,20 +180,20 @@ export default function EventView(props: EventViewProps) {
               )}
             </div>
             Daftar
-          </button>
+          </Button>
         )}
         {event.hasCertificate && eventPassed && joined && (
-          <button
+          <Button
+            pill
             onClick={() =>
               downloadCertificate(session!.user, event._id, event.title)
             }
-            className="h-9 md:h-10 px-4 bg-primary text-white rounded-full"
           >
             <div className="mr-2">
               <FaDownload />
             </div>
             Unduh Sertifikat
-          </button>
+          </Button>
         )}
       </div>
     </div>

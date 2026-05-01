@@ -1,10 +1,10 @@
-import { authOptions } from "@/next-auth";
+import { auth } from "@/auth";
 import prisma from "@/prisma";
 import { urlFor } from "@/sanity/image";
 import { fetchCertificate } from "@/sanity/queries/certificate";
 import { createCanvas, loadImage, registerFont } from "canvas";
 import dayjs from "dayjs";
-import { getServerSession, type Session } from "next-auth";
+import { type Session } from "next-auth";
 import { NextResponse, type NextRequest } from "next/server";
 import path from "path";
 
@@ -74,10 +74,10 @@ async function generatePdf(session: Session, eventId: string) {
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ eventId: string }> },
+  ctx: { params: Promise<{ eventId: string }> },
 ) {
-  const eventId = (await params).eventId;
-  const session = await getServerSession(authOptions);
+  const { eventId } = await ctx.params;
+  const session = await auth();
 
   if (!session || !(await isAuthorized(session, eventId))) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

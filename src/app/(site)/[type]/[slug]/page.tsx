@@ -1,7 +1,6 @@
-import { authOptions } from "@/next-auth";
+import { auth } from "@/auth";
 import { fetchArticleTitle, fetchEventTitle } from "@/sanity/queries";
 import type { Metadata, ResolvingMetadata } from "next";
-import { getServerSession } from "next-auth";
 import { Suspense } from "react";
 import { PostType, type PostsRouteParams } from "../";
 import { getArticle, getEvent } from "./actions";
@@ -30,8 +29,8 @@ export async function generateMetadata(
 }
 
 export default async function PostPage(props: PostPageProps) {
+  const session = await auth();
   const { type, slug } = await props.params;
-  const session = await getServerSession(authOptions);
 
   return (
     <Suspense fallback={<PostLoadingView type={type} />}>

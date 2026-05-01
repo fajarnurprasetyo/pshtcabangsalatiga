@@ -1,24 +1,19 @@
 @import "tailwindcss";
-@source "../../.flowbite-react/class-list.json";
-@source "../../../.flowbite-react/class-list.json";
 @import "flowbite-react/plugin/tailwindcss";
-@source "../../../../.flowbite-react/class-list.json";
+@source "../../.flowbite-react/class-list.json";
 
 @variant dark false;
 
 @theme {
-  --color-primary: oklch(53.9% 0.1853 263.4);
-}
-
-button {
-  display: flex;
-  align-items: center;
-}
-
-button:not(:disabled) {
-  cursor: pointer;
-}
-
-hr {
-  align-self: stretch;
+  --color-primary-50: oklch(0.95 0.023 259);
+  --color-primary-100: oklch(0.89 0.052 259);
+  --color-primary-200: oklch(0.83 0.082 259);
+  --color-primary-300: oklch(0.77 0.114 259);
+  --color-primary-400: oklch(0.71 0.147 259);
+  --color-primary-500: oklch(0.65 0.181 259);
+  --color-primary-600: oklch(0.59 0.217 259);
+  --color-primary-700: oklch(0.53 0.198 259);
+  --color-primary-800: oklch(0.47 0.176 259);
+  --color-primary-900: oklch(0.41 0.153 259);
+  --color-primary-950: oklch(0.35 0.131 259);
 }

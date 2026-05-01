@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - main
-      - dev
+      - staging
+      - feat/**
+      - fix/**
+      - hotfix/**
+      - release/**
 
 jobs:
   deploy:
