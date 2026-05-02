@@ -3,10 +3,9 @@
 import useDownloadCertificateModal from "@/hooks/modals/useDownloadCertificateModal";
 import useLoginUrl from "@/hooks/useLoginUrl";
 import useSession from "@/hooks/useSession";
+import dayjs from "@/libs/dayjs";
 import { urlFor } from "@/sanity/image";
 import type { PropsWithNullableSession } from "@/types/react";
-import dayjs from "dayjs";
-import "dayjs/locale/id";
 import { Button } from "flowbite-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,8 +25,6 @@ import {
 import { useBoolean } from "react-use";
 import { joinEvent, updateLikePost, type getEvent } from "./actions";
 import { useViewUpdater } from "./hooks";
-
-dayjs.locale("id");
 
 export type EventViewProps = PropsWithNullableSession<{
   event: ReturnType<typeof getEvent>;
@@ -50,16 +47,12 @@ export default function EventView(props: EventViewProps) {
   const [joined, setJoined] = useBoolean(false);
   const [joinPending, setJoinPending] = useBoolean(false);
 
-  const now = dayjs();
-  const startDate = dayjs(event.startDate);
   const finishDate = dayjs(event.finishDate ?? event.startDate);
-
-  const eventStarted = startDate.isValid() && now.isAfter(startDate);
   const eventPassed =
     finishDate.isValid() &&
     (event.fullDay
-      ? now.startOf("day").isAfter(finishDate.startOf("day"))
-      : now.isAfter(finishDate));
+      ? dayjs().startOf("day").isAfter(finishDate.startOf("day"))
+      : dayjs().isAfter(finishDate));
 
   const { data: session } = useSession(props.session, {
     onSignIn({ user: { id } }) {
@@ -168,7 +161,7 @@ export default function EventView(props: EventViewProps) {
             {dayjs(event.startDate).format("DD MMMM YYYY HH:mm [WIB]")}
           </div>
         </div>
-        {!eventStarted && (
+        {!eventPassed && (
           <Button pill onClick={handleJoin} disabled={joinPending}>
             <div className="mr-2">
               {joinPending ? (

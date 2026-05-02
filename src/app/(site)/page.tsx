@@ -1,6 +1,6 @@
 import type { Event } from "@/generated/types/sanity";
+import dayjs from "@/libs/dayjs";
 import { urlFor } from "@/sanity/image";
-import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
