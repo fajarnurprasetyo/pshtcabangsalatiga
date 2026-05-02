@@ -1,8 +1,8 @@
 "use client";
 
+import dayjs from "@/libs/dayjs";
 import { urlFor } from "@/sanity/image";
 import type { PropsWithNullableSession } from "@/types/react";
-import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, usePathname } from "next/navigation";

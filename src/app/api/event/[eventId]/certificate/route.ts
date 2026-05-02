@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
+import dayjs from "@/libs/dayjs";
 import prisma from "@/prisma";
 import { urlFor } from "@/sanity/image";
 import { fetchCertificate } from "@/sanity/queries/certificate";
 import { createCanvas, loadImage, registerFont } from "canvas";
-import dayjs from "dayjs";
 import { type Session } from "next-auth";
 import { NextResponse, type NextRequest } from "next/server";
 import path from "path";
