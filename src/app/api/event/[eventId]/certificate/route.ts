@@ -32,12 +32,12 @@ async function generatePdf(session: Session, eventId: string) {
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   const event = certificate.event;
 
-  const finishDate = dayjs(event.finishDate ?? event.startDate);
+  const finishDate = dayjs.tz(event.finishDate ?? event.startDate);
   const eventPassed =
     finishDate.isValid() &&
     (event.fullDay
-      ? dayjs().startOf("day").isAfter(finishDate.startOf("day"))
-      : dayjs().isAfter(finishDate));
+      ? dayjs.tz().startOf("day").isAfter(finishDate.startOf("day"))
+      : dayjs.tz().isAfter(finishDate));
 
   if (!eventPassed) {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });

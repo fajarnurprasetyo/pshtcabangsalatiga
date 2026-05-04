@@ -46,12 +46,12 @@ export default function EventView(props: EventViewProps) {
   const [joined, setJoined] = useBoolean(false);
   const [joinPending, setJoinPending] = useBoolean(false);
 
-  const finishDate = dayjs(event.finishDate ?? event.startDate);
+  const finishDate = dayjs.tz(event.finishDate ?? event.startDate);
   const eventPassed =
     finishDate.isValid() &&
     (event.fullDay
-      ? dayjs().startOf("day").isAfter(finishDate.startOf("day"))
-      : dayjs().isAfter(finishDate));
+      ? dayjs.tz().startOf("day").isAfter(finishDate.startOf("day"))
+      : dayjs.tz().isAfter(finishDate));
 
   const { data: session } = useSession(props.session, {
     onSignIn({ user: { id } }) {
@@ -123,7 +123,7 @@ export default function EventView(props: EventViewProps) {
             </Link>
           </div>
           <div className="text-gray-700 text-sm">
-            pshtcabangsalatiga | {dayjs(event.date).format("MMM D, YYYY")}
+            pshtcabangsalatiga | {dayjs.tz(event.date).format("MMM D, YYYY")}
           </div>
         </div>
         <div className="flex justify-end gap-2">
@@ -165,7 +165,7 @@ export default function EventView(props: EventViewProps) {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <FaRegCalendarCheck />
-            {dayjs(event.startDate).format("DD MMMM YYYY HH:mm [WIB]")}
+            {dayjs.tz(event.startDate).format("DD MMMM YYYY HH:mm [WIB]")}
           </div>
         </div>
         {!eventPassed && (

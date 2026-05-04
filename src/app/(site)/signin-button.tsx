@@ -5,12 +5,14 @@ import { Button } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { CgSpinner } from "react-icons/cg";
 import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
-import { useBoolean } from "react-use";
+import { useBoolean, useUnmount } from "react-use";
 
 export default function SignInButton() {
   const router = useRouter();
   const loginUrl = useLoginUrl();
   const [loading, setLoading] = useBoolean(false);
+
+  useUnmount(() => setLoading(false));
 
   return (
     <Button

@@ -4,7 +4,6 @@ import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { cookies } from "next/headers";
-import dayjs from "./dayjs";
 import prisma from "./prisma";
 
 export class UserNotFound extends CredentialsSignin {
@@ -105,10 +104,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user && account) {
         const rememberCookie = (await cookies()).get("remember-session");
         const remember = rememberCookie?.value === "true";
-
-        token.exp = dayjs()
-          .add(remember ? 30 : 1, "day")
-          .unix();
 
         if (account.provider !== "credentials") {
           user.person = await prisma.person.findUniqueOrThrow({

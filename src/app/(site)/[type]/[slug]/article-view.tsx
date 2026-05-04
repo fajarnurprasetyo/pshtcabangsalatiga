@@ -34,7 +34,7 @@ export default function ArticleView(props: ArticleViewProps) {
             </Link>
           </div>
           <div className="text-gray-700 text-sm">
-            {dayjs(article.date).format("dddd, D MMMM YYYY HH:MM WIB")}
+            {dayjs.tz(article.date).format("dddd, D MMMM YYYY HH:MM WIB")}
           </div>
         </div>
         <div className="flex gap-2">

@@ -5,5 +5,7 @@ import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.locale("id");
+dayjs.tz.setDefault("Asia/Jakarta")
 
 export default dayjs;
