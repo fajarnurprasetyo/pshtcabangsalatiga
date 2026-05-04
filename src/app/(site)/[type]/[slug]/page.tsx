@@ -2,7 +2,7 @@ import { auth } from "@/libs/auth";
 import { fetchArticleTitle, fetchEventTitle } from "@/sanity/queries";
 import type { Metadata, ResolvingMetadata } from "next";
 import { Suspense } from "react";
-import { PostType, type PostsRouteParams } from "../";
+import { PostType, type PostsRouteParams } from "..";
 import { getArticle, getEvent } from "./actions";
 import ArticleView from "./article-view";
 import EventView from "./event-view";

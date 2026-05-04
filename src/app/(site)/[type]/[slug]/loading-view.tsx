@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import _ from "lodash";
 import { useMemo } from "react";
-import { PostType } from "../";
+import { PostType } from "..";
 
 export interface PostLoadingPageProps {
   type: string;

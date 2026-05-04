@@ -1,14 +1,14 @@
 "use server";
 
-import { auth, signIn, signOut } from "@/libs/auth";
+import { auth, signOut } from "@/libs/auth";
 import {
   Avatar,
-  Button,
   Dropdown,
   DropdownDivider,
   DropdownHeader,
   DropdownItem,
 } from "flowbite-react";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { type PropsWithChildren } from "react";
 import {
@@ -18,18 +18,17 @@ import {
   FaWhatsapp,
   FaYoutube,
 } from "react-icons/fa6";
-import {
-  HiArrowRightEndOnRectangle,
-  HiArrowRightStartOnRectangle,
-  HiCog6Tooth,
-} from "react-icons/hi2";
+import { HiArrowRightStartOnRectangle, HiCog6Tooth } from "react-icons/hi2";
+import SignInButton from "./signin-button";
 
-export default async function SiteLayout({ children }: PropsWithChildren) {
+export default async function SiteLayoute({ children }: PropsWithChildren) {
   const session = await auth();
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname");
 
   return (
     <>
-      <header className="top-0 z-10 sticky">
+      <header key={pathname} className="top-0 z-10 sticky">
         <div className="flex justify-between items-center bg-black px-3 md:px-4 py-2 md:py-3">
           <Link href="/">
             <div className="relative bg-[url(/assets/images/logo_main.png)] bg-cover w-[150px] md:w-[218px] h-[40px] md:h-[58px]" />
@@ -68,16 +67,7 @@ export default async function SiteLayout({ children }: PropsWithChildren) {
               </DropdownItem>
             </Dropdown>
           ) : (
-            <Button
-              className="px-3 md:px-5 focus:ring-0 h-9 md:h-12 text-xs md:text-base"
-              onClick={async () => {
-                "use server";
-                await signIn();
-              }}
-            >
-              <HiArrowRightEndOnRectangle className="mr-2" />
-              Masuk
-            </Button>
+            <SignInButton />
           )}
         </div>
         <div className="bg-primary-700 h-0.75 md:h-1.25" />

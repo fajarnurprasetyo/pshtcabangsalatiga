@@ -11,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, usePathname, useRouter } from "next/navigation";
 import { use } from "react";
+import { CgSpinner } from "react-icons/cg";
 import {
   FaCheck,
   FaChevronRight,
@@ -18,7 +19,6 @@ import {
   FaHouse,
   FaRegCalendarCheck,
   FaShare,
-  FaSpinner,
   FaThumbsUp,
   FaUserPlus,
 } from "react-icons/fa6";
@@ -163,35 +163,37 @@ export default function EventView(props: EventViewProps) {
 
       <div className="flex sm:flex-row flex-col justify-between items-center md:items-start gap-2 md:gap-0">
         <div className="flex flex-col gap-1">
-          <div className="flex items-center">
-            <FaRegCalendarCheck className="mr-2" />
+          <div className="flex items-center gap-2">
+            <FaRegCalendarCheck />
             {dayjs(event.startDate).format("DD MMMM YYYY HH:mm [WIB]")}
           </div>
         </div>
         {!eventPassed && (
-          <Button pill onClick={handleJoin} disabled={joinPending}>
-            <div className="mr-2">
-              {joinPending ? (
-                <FaSpinner className="animate-spin" />
-              ) : joined ? (
-                <FaCheck />
-              ) : (
-                <FaUserPlus />
-              )}
-            </div>
+          <Button
+            pill
+            onClick={handleJoin}
+            disabled={joinPending}
+            className="gap-2"
+          >
+            {joinPending ? (
+              <CgSpinner className="animate-spin" />
+            ) : joined ? (
+              <FaCheck />
+            ) : (
+              <FaUserPlus />
+            )}
             Daftar
           </Button>
         )}
         {event.hasCertificate && eventPassed && joined && (
           <Button
             pill
+            className="gap-2"
             onClick={() =>
               downloadCertificate(session!.user, event._id, event.title)
             }
           >
-            <div className="mr-2">
-              <FaDownload />
-            </div>
+            <FaDownload />
             Unduh Sertifikat
           </Button>
         )}

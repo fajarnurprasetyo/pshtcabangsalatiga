@@ -1,9 +1,10 @@
 "use client";
 
 import DownloadCertificateModalContext from "@/shared/DownloadCertificateModalContext";
-import { Button, Modal, ModalBody, Spinner } from "flowbite-react";
+import { Button, Modal, ModalBody } from "flowbite-react";
 import type { User } from "next-auth";
 import { useState, type PropsWithChildren } from "react";
+import { CgSpinner } from "react-icons/cg";
 import { useBoolean } from "react-use";
 
 export default function DownloadCertificateModalProvider({
@@ -66,8 +67,8 @@ export default function DownloadCertificateModalProvider({
       <Modal show={showModal} onClose={handleCancel} className="z-2000">
         <ModalBody className="flex flex-col">
           {!errorText ? (
-            <div className="flex gap-2">
-              <Spinner size="sm" />
+            <div className="flex items-center gap-2">
+              <CgSpinner size="animate-spin" />
               <p>Mengunduh sertifikat...</p>
             </div>
           ) : (

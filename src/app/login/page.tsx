@@ -1,24 +1,24 @@
 "use client";
 
 import type { ProviderId } from "@auth/core/providers";
-import { Button, HR, TextInput } from "flowbite-react";
+import { Button, Checkbox, HR, Label, TextInput } from "flowbite-react";
 import { signIn, type SignInOptions } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useActionState } from "react";
-import { FaSpinner } from "react-icons/fa6";
+import { CgSpinner } from "react-icons/cg";
 import { FcGoogle } from "react-icons/fc";
 import { HiKey, HiUser } from "react-icons/hi2";
-import { useCookie } from "react-use";
+import { useBoolean, useCookie } from "react-use";
 
 function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
   const [rememberCookie, setRememberCookie] = useCookie("remember-session");
-  const remember = rememberCookie === "true";
   const setRemember = (value: boolean) =>
     setRememberCookie(JSON.stringify(value));
+  const remember = rememberCookie === "true";
 
   const handleSignIn = async (provider: ProviderId, options?: SignInOptions) =>
     await signIn(provider, { ...options, redirectTo: callbackUrl });
@@ -34,6 +34,10 @@ function LoginForm() {
     undefined,
   );
 
+  const [googleSignIn, setGoogleSignIn] = useBoolean(false);
+
+  const loading = isPending || googleSignIn;
+
   return (
     <main className="flex flex-col self-center px-8 sm:px-16 py-10 sm:py-16 w-full max-w-2xl">
       <h1 className="font-semibold text-3xl text-center select-none">Masuk</h1>
@@ -47,7 +51,7 @@ function LoginForm() {
           type="text"
           name="login"
           icon={HiUser}
-          placeholder="Nama Pengguna"
+          placeholder="Nama Pengguna / Email / Telepon"
         />
 
         <TextInput
@@ -58,8 +62,22 @@ function LoginForm() {
           placeholder="Kata Sandi"
         />
 
-        <Button type="submit" disabled={isPending}>
-          {isPending ? <FaSpinner className="animate-spin" /> : "Masuk"}
+        <div className="flex justify-between items-center select-none">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="remember"
+              checked={remember}
+              onChange={({ target }) => setRemember(target.checked)}
+            />
+            <Label htmlFor="remember">Ingat saya</Label>
+          </div>
+          <button className="focus:outline-0 text-primary-700 text-sm hover:underline focus:underline cursor-pointer">
+            Lupa kata sandi?
+          </button>
+        </div>
+
+        <Button type="submit" disabled={loading}>
+          {isPending ? <CgSpinner className="animate-spin" /> : "Masuk"}
         </Button>
       </form>
 
@@ -71,12 +89,14 @@ function LoginForm() {
 
       <Button
         color="alternative"
+        disabled={loading}
+        className="gap-2"
         onClick={() => {
-          setRemember(true);
+          setGoogleSignIn(true);
           handleSignIn("google");
         }}
       >
-        <FcGoogle className="mr-2" />
+        {googleSignIn ? <CgSpinner className="animate-spin" /> : <FcGoogle />}
         Masuk dengan Google
       </Button>
 

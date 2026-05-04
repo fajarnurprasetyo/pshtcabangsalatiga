@@ -19,7 +19,8 @@ import {
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { Suspense, useRef, useState, type SubmitEvent } from "react";
-import { FaCheck, FaSpinner, FaXmark } from "react-icons/fa6";
+import { CgSpinner } from "react-icons/cg";
+import { FaCheck, FaXmark } from "react-icons/fa6";
 import { useBoolean, useDebounce, useToggle } from "react-use";
 import { checkUsername, findBranch, register } from "./actions";
 
@@ -182,7 +183,7 @@ function Form({ callbackUrl }: FromProps) {
           placeholder="Nama Pengguna"
           rightIcon={(props) =>
             usernameChecking ? (
-              <FaSpinner
+              <CgSpinner
                 {...props}
                 className={`${props.className} animate-spin`}
               />
@@ -255,7 +256,7 @@ function Form({ callbackUrl }: FromProps) {
             />
 
             {branchOptionsLoading && (
-              <FaSpinner className="top-1/2 right-3 absolute -translate-y-1/2 animate-spin pointer-events-none" />
+              <CgSpinner className="top-1/2 right-3 absolute -translate-y-1/2 animate-spin pointer-events-none" />
             )}
 
             {branchQuery && (
@@ -339,7 +340,7 @@ function Form({ callbackUrl }: FromProps) {
           loading
         }
       >
-        {loading ? <FaSpinner className="animate-spin" /> : "Daftar"}
+        {loading ? <CgSpinner className="animate-spin" /> : "Daftar"}
       </Button>
     </form>
   );
