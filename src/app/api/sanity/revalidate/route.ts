@@ -1,5 +1,5 @@
-import Env from "@/env";
-import prisma from "@/prisma";
+import Env from "@/libs/env";
+import prisma from "@/libs/prisma";
 import crypto from "crypto";
 import { revalidateTag } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";

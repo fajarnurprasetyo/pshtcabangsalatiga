@@ -1,3 +1,4 @@
+import { Container } from "@/components/Container";
 import type { Event } from "@/generated/types/sanity";
 import dayjs from "@/libs/dayjs";
 import { urlFor } from "@/sanity/image";
@@ -26,14 +27,14 @@ async function EventList({ type }: EventListProps) {
                   width={640}
                   height={360}
                   loading="eager"
+                  alt={event.title ?? "Gambar thumbnail"}
                   src={urlFor(event.thumbnail).size(640, 360).url()}
-                  alt="Event thumbnail"
                 />
               )}
-              <div className="top-0 absolute flex bg-gradient-to-b from-black/80 to-black/0 px-3 pt-1 pb-3 w-full">
+              <div className="top-0 absolute flex bg-linear-to-b from-black/80 to-black/0 px-3 pt-1 pb-3 w-full">
                 <h5 className="text-lg">{event.title}</h5>
               </div>
-              <div className="bottom-0 absolute flex justify-between bg-gradient-to-t from-black/80 to-black/0 px-3 pt-3 pb-0.5 w-full">
+              <div className="bottom-0 absolute flex justify-between bg-linear-to-t from-black/80 to-black/0 px-3 pt-3 pb-0.5 w-full">
                 <div className="flex items-baseline">
                   <FaCalendarCheck className="mr-2 w-3 h-3" />
                   {dayjs(event.startDate).format("DD/MM/YYYY HH:mm")}
@@ -62,10 +63,10 @@ async function EventList({ type }: EventListProps) {
 
 export default async function HomePage() {
   return (
-    <div className="flex flex-col self-center px-2 md:px-4 py-4 md:py-6 w-full max-w-7xl">
+    <Container>
       <Suspense fallback="LOADING...">
         <EventList type="seminar" />
       </Suspense>
-    </div>
+    </Container>
   );
 }

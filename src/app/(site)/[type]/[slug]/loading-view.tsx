@@ -17,20 +17,20 @@ export default function PostLoadingView({ type }: PostLoadingPageProps) {
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
-      <div className="flex flex-wrap gap-2 justify-center">
+      <div className="flex flex-wrap justify-center gap-2">
         {fakeTitle.map((word, i) => (
           <div
             key={i}
-            className="animate-pulse text-2xl font-semibold bg-gray-300 text-transparent rounded"
+            className="bg-gray-300 rounded font-semibold text-transparent text-2xl animate-pulse"
           >
             {word}
           </div>
         ))}
       </div>
 
-      <div className="flex items-end justify-between">
+      <div className="flex justify-between items-end">
         <div className="flex flex-col gap-1">
-          <div className="flex gap-1 items-center">
+          <div className="flex items-center gap-1">
             &nbsp;
             {/* <Link href="/" className="font-semibold text-blue-600">
               <FaHouse />
@@ -44,7 +44,7 @@ export default function PostLoadingView({ type }: PostLoadingPageProps) {
               {event.type === "seminar" ? "Seminar" : "Kompetisi"}
             </Link> */}
           </div>
-          <div className="animate-pulse bg-gray-300 text-sm text-transparent rounded">
+          <div className="bg-gray-300 rounded text-transparent text-sm animate-pulse">
             Minggu, 09 September 2009 09:09 WIB
           </div>
         </div>
@@ -58,16 +58,16 @@ export default function PostLoadingView({ type }: PostLoadingPageProps) {
         </div>
       </div>
 
-      <div className="animate-pulse W-FULL aspect-video bg-gray-300 rounded-md" />
+      <div className="bg-gray-300 rounded-md aspect-video animate-pulse W-FULL" />
 
-      <div className="flex flex-col sm:flex-row gap-2 md:gap-0 items-center md:items-start justify-between">
-        <div className="flex flex-col gap-1 items-start">
-          <div className="animate-pulse pl-6 bg-gray-300 text-transparent rounded">
+      <div className="flex sm:flex-row flex-col justify-between items-center md:items-start gap-2 md:gap-0">
+        <div className="flex flex-col items-start gap-1">
+          <div className="bg-gray-300 pl-6 rounded text-transparent animate-pulse">
             Minggu, 09 September 2009 09:09 WIB
           </div>
         </div>
         {isEvent && (
-          <div className="animate-pulse w-[160px] h-9 md:h-10 bg-gray-300 rounded-full" />
+          <div className="bg-gray-300 rounded-full w-40 h-9 md:h-10 animate-pulse" />
         )}
       </div>
     </div>

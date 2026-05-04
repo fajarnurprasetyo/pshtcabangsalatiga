@@ -57,11 +57,11 @@ const rootTheme = createTheme({
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="id" className="antialiased">
-      <Suspense fallback={null}>
+      <Suspense>
         <AuthProvider>
           <ThemeProvider theme={rootTheme}>
             <DownloadCertificateModalProvider>
-              <body className="flex flex-col min-h-[100dvh]">{children}</body>
+              <body className="flex flex-col min-h-dvh">{children}</body>
             </DownloadCertificateModalProvider>
           </ThemeProvider>
         </AuthProvider>

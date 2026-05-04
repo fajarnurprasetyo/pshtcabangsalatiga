@@ -67,8 +67,8 @@ export default function ArticleView(props: ArticleViewProps) {
           height={1080}
           loading="eager"
           className="rounded-md w-full aspect-video"
+          alt={article.title ?? "Gambar thumbnail"}
           src={urlFor(article.thumbnail).url()}
-          alt="Event thumbnail"
         />
       )}
     </div>

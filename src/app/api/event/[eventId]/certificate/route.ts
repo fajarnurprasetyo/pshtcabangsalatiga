@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
+import { auth } from "@/libs/auth";
 import dayjs from "@/libs/dayjs";
-import prisma from "@/prisma";
+import prisma from "@/libs/prisma";
 import { urlFor } from "@/sanity/image";
 import { fetchCertificate } from "@/sanity/queries/certificate";
 import { createCanvas, loadImage, registerFont } from "canvas";

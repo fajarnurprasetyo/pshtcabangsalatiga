@@ -1,7 +1,7 @@
 "use server";
 
 import type { Event } from "@/generated/types/sanity";
-import prisma from "@/prisma";
+import prisma from "@/libs/prisma";
 import { fetchEvents } from "@/sanity/queries/event";
 import { cacheTag } from "next/cache";
 

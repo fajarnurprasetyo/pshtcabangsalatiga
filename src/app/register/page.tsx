@@ -126,7 +126,7 @@ function Form({ callbackUrl }: FromProps) {
     [branchQuery],
   );
 
-  const [role, setRole] = useState<UserRole>(UserRole.SISWA);
+  const [role, setRole] = useState<UserRole>("SISWA");
 
   const [loading, setLoading] = useBoolean(false);
 
@@ -310,8 +310,8 @@ function Form({ callbackUrl }: FromProps) {
         <Label className="block mb-2">Status Keanggotaan</Label>
         <div className="flex gap-4">
           {[
-            { value: UserRole.SISWA, label: "Siswa" },
-            { value: UserRole.WARGA, label: "Warga" },
+            { value: "SISWA", label: "Siswa" },
+            { value: "WARGA", label: "Warga" },
           ].map((item) => (
             <div key={item.value} className="flex items-center gap-2">
               <Radio
@@ -319,7 +319,7 @@ function Form({ callbackUrl }: FromProps) {
                 name="role"
                 value={item.value}
                 checked={item.value === role}
-                onClick={() => setRole(item.value)}
+                onClick={() => setRole(item.value as UserRole)}
               />
               <Label htmlFor={`user-role-${item.value}`}>{item.label}</Label>
             </div>

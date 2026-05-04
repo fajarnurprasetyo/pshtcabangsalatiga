@@ -1,13 +1,6 @@
 name: Deploy to Vercel
 
-on:
-  push:
-    branches:
-      - main
-      - feat/**
-      - fix/**
-      - hotfix/**
-      - release/**
+on: {}
 
 jobs:
   deploy:

@@ -1,15 +1,15 @@
 "use client";
 
 import useDownloadCertificateModal from "@/hooks/modals/useDownloadCertificateModal";
-import useLoginUrl from "@/hooks/useLoginUrl";
 import useSession from "@/hooks/useSession";
 import dayjs from "@/libs/dayjs";
 import { urlFor } from "@/sanity/image";
 import type { PropsWithNullableSession } from "@/types/react";
 import { Button } from "flowbite-react";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, redirect, usePathname, useRouter } from "next/navigation";
+import { notFound, usePathname, useRouter } from "next/navigation";
 import { use } from "react";
 import {
   FaCheck,
@@ -37,7 +37,6 @@ export default function EventView(props: EventViewProps) {
 
   const router = useRouter();
   const pathname = usePathname();
-  const loginUrl = useLoginUrl();
 
   const { downloadCertificate } = useDownloadCertificateModal();
 
@@ -66,7 +65,11 @@ export default function EventView(props: EventViewProps) {
   });
 
   const handleLike = async () => {
-    if (!session) redirect(loginUrl, "push");
+    if (!session) {
+      signIn();
+      return;
+    }
+
     if (likePending) return;
 
     setLikePending(true);
@@ -82,7 +85,11 @@ export default function EventView(props: EventViewProps) {
   };
 
   const handleJoin = async () => {
-    if (!session) redirect(loginUrl, "push");
+    if (!session) {
+      signIn();
+      return;
+    }
+
     if (joined || joinPending) return;
 
     setJoinPending(true);
@@ -149,8 +156,8 @@ export default function EventView(props: EventViewProps) {
           height={1080}
           loading="eager"
           className="rounded-md w-full aspect-video"
+          alt={event.title ?? "Gambar thumbnail"}
           src={urlFor(event.thumbnail).url()}
-          alt="Event thumbnail"
         />
       )}
 

@@ -1,32 +1,16 @@
-import { UserRole } from "@/generated/prisma/enums";
-import prisma from "@/prisma";
-import bcrypt from "bcrypt";
-import branch from "./branch.json";
+import prisma from "@/libs/prisma";
+import seedBranch from "./branch";
+import seedUser from "./user";
 
 async function seed() {
-  await prisma.$transaction(async (tx) => {
-    const exists = await tx.branch.findFirst({ select: { id: true } });
-    if (!exists) await tx.branch.createMany({ data: branch });
-  });
-
-  const { ADMIN_NAME, ADMIN_USERNAME, ADMIN_PASSWORD } = process.env;
-  if (ADMIN_USERNAME && ADMIN_PASSWORD) {
-    await prisma.user.upsert({
-      where: { username: ADMIN_USERNAME },
-      update: {},
-      create: {
-        name: ADMIN_NAME || "Admin",
-        username: ADMIN_USERNAME,
-        encryptedPassword: bcrypt.hashSync(ADMIN_PASSWORD, 12),
-        roles: [UserRole.ADMIN],
-      },
-    });
-  }
+  await seedBranch();
+  await seedUser();
 }
 
 seed()
   .then(async () => {
     await prisma.$disconnect();
+    process.exit(0);
   })
   .catch(async (err) => {
     console.error(err);

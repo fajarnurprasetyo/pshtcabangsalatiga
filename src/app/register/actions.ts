@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/prisma";
+import prisma from "@/libs/prisma";
 import { UsernameSchema, UserRegisterSchema } from "@/schemas/user";
 import bcrypt from "bcrypt";
 import type { ZodError } from "zod";
@@ -21,28 +21,23 @@ export async function findBranch(query: string) {
     select: { id: true, name: true },
     orderBy: { name: "asc" },
     where: {
-      AND: [
-        { deletedAt: null },
-        {
-          OR: [
-            ...(isNaN(num)
-              ? []
-              : [
-                  { id: num },
-                  {
-                    id: {
-                      gte: num * 10,
-                      lt: (num + 1) * 10,
-                    },
-                  },
-                ]),
-            {
-              name: {
-                contains: trimmedQuery,
-                mode: "insensitive",
+      OR: [
+        ...(isNaN(num)
+          ? []
+          : [
+              { id: num },
+              {
+                id: {
+                  gte: num * 10,
+                  lt: (num + 1) * 10,
+                },
               },
-            },
-          ],
+            ]),
+        {
+          name: {
+            contains: trimmedQuery,
+            mode: "insensitive",
+          },
         },
       ],
     },
@@ -75,7 +70,10 @@ export async function register(payload: Record<string, unknown>): Promise<
 
     return {
       error: null,
-      data: { username: user.username, password: parsed.data.password },
+      data: {
+        username: parsed.data.username,
+        password: parsed.data.password,
+      },
     };
   } catch (error) {
     console.error(error);

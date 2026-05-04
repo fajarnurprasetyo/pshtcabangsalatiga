@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "@/libs/auth";
 import { fetchArticleTitle, fetchEventTitle } from "@/sanity/queries";
 import type { Metadata, ResolvingMetadata } from "next";
 import { Suspense } from "react";

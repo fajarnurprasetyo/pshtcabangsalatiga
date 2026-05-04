@@ -1,13 +1,16 @@
+import { type Account, type Person } from "@/generated/prisma/client";
 import "next-auth";
 import "next-auth/jwt";
 
-export type PrismaUser = Omit<
+type PrismaUser = Omit<
   import("@/generated/prisma/client").User,
   "encryptedPassword"
-> & {};
+> & {
+  accounts: Account[];
+  person: Person | null;
+};
 
 declare module "next-auth" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface User extends PrismaUser {}
 
   interface Session {

@@ -1,10 +1,11 @@
 "use server";
 
-import { auth } from "@/auth";
-import prisma from "@/prisma";
+import { auth } from "@/libs/auth";
+import prisma from "@/libs/prisma";
 import { fetchArticle } from "@/sanity/queries";
 import { fetchEvent } from "@/sanity/queries/event";
 import { cacheTag, revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
 
 export async function getArticle(slug: string) {
   "use cache";
@@ -59,6 +60,8 @@ export async function joinEvent(postId: string) {
     await prisma.participant.create({
       data: { userId, postId },
     });
+
+    revalidateTag("event", "max");
     revalidateTag(`event:${postId}`, "max");
     return true;
   } catch (err) {
@@ -88,6 +91,7 @@ export async function updateLikePost(
         });
       }
 
+      revalidateTag(type, "max");
       revalidateTag(`${type}:${postId}`, "max");
       return like;
     } catch (err) {
@@ -99,10 +103,23 @@ export async function updateLikePost(
 }
 
 export async function updatePostView(type: string, postId: string) {
-  await prisma.postView.upsert({
-    where: { postId },
-    create: { postId, views: 1 },
-    update: { views: { increment: 1 } },
-  });
-  revalidateTag(`${type}:${postId}`, "max");
+  const cookieStore = await cookies();
+  const tag = `${type}:${postId}`;
+  const key = `${tag}:view`;
+
+  if (!cookieStore.has(key)) {
+    await prisma.postView.upsert({
+      where: { postId },
+      create: { postId, views: 1 },
+      update: { views: { increment: 1 } },
+    });
+
+    cookieStore.set(key, "true", {
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    });
+
+    revalidateTag(type, "max");
+    revalidateTag(tag, "max");
+  }
 }

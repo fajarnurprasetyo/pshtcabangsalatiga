@@ -12,60 +12,151 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
 enum UserRole {
   SISWA
   CALON_WARGA
   WARGA
+
+  SUPER_ADMIN
   ADMIN
 }
 
 model User {
-  id String @id @default(uuid())
+  id                String  @id @default(uuid())
+  name              String?
+  username          String? @unique
+  encryptedPassword String? @map("encrypted_password") @db.Char(60)
 
-  name              String
-  username          String @unique
-  encryptedPassword String @map("encrypted_password") @db.Char(60)
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
 
-  branchId  Int?       @map("branch_id")
-  subBranch String?    @map("sub_branch")
-  roles     UserRole[] @default([])
+  phone         String?   @unique
+  phoneVerified DateTime? @map("phone_verified")
 
-  email                  String?   @unique
-  emailConfirmationToken String?   @map("email_confirmation_token") @db.Char(6)
-  emailConfirmedAt       DateTime? @map("email_confirmed_at")
+  branchId  Int?    @map("branch_id")
+  subBranch String? @map("sub_branch")
 
-  phone                  String?   @unique
-  phoneConfirmationToken String?   @map("phone_confirmation_token") @db.Char(6)
-  phoneConfirmedAt       DateTime? @map("phone_confirmed_at")
-
-  branch       Branch?       @relation(fields: [branchId], references: [id])
-  likes        PostLike[]
-  particiption Participant[]
+  image String?
+  roles UserRole[] @default([])
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
+
+  accounts       Account[]
+  authenticators Authenticator[]
+  person         Person?
+  branch         Branch?         @relation(fields: [branchId], references: [id])
+  likes          PostLike[]
+  particiption   Participant[]
+}
+
+model Person {
+  id       String  @id @default(uuid())
+  identity String? @unique
+  name     String?
+  gender   Gender?
+
+  birthPlace String?   @map("birth_place")
+  birthDate  DateTime? @map("birth_date")
+
+  religion  String?
+  education String?
+  ocupation String?
+  address   String?
+
+  branchId    Int?    @map("branch_id")
+  subBranchId String?
+  userId      String? @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  branch    Branch?    @relation(fields: [branchId], references: [id])
+  subBranch SubBranch? @relation(fields: [subBranchId], references: [id])
+  user      User?      @relation(fields: [userId], references: [id])
+}
+
+model Account {
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Authenticator {
+  id                   String  @id @default(cuid())
+  credentialID         String  @unique @map("credential_id")
+  userId               String  @map("user_id")
+  providerAccountId    String  @map("provider_account_id")
+  credentialPublicKey  String  @map("credential_public_key")
+  counter              Int
+  credentialDeviceType String  @map("credential_device_type")
+  credentialBackedUp   Boolean @map("credential_backed_up")
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Branch {
   id   Int    @id
   name String
 
-  users User[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  users       User[]
+  people      Person[]
+  subBranches SubBranch[]
+}
+
+model SubBranch {
+  id       String @id @default(cuid())
+  branchId Int    @map("branch_id")
+  name     String @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  people Person[]
+  branch Branch   @relation(fields: [branchId], references: [id])
 }
 
 model PostLike {
   userId String @map("user_id")
   postId String @map("post_id")
 
-  user User @relation(fields: [userId], references: [id])
-
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
 
   @@id([userId, postId])
 }
@@ -82,10 +173,10 @@ model Participant {
   userId String @map("user_id")
   postId String @map("post_id")
 
-  user User @relation(fields: [userId], references: [id])
-
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
 
   @@id([userId, postId])
 }
