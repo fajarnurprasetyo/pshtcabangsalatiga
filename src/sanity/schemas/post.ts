@@ -15,7 +15,7 @@ export function postFields(insert: FieldDefinition[] = [], index: number = 4) {
     }),
     defineField({
       type: "image",
-      name: "thumbnail",
+      name: "image",
       validation: (rule) => rule.required(),
     }),
     defineField({

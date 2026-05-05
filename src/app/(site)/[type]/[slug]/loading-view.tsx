@@ -1,14 +1,13 @@
 import { faker } from "@faker-js/faker";
 import _ from "lodash";
 import { useMemo } from "react";
-import { PostType } from "..";
 
 export interface PostLoadingPageProps {
   type: string;
 }
 
 export default function PostLoadingView({ type }: PostLoadingPageProps) {
-  const isEvent = type === PostType.event;
+  const isEvent = type === "kegiatan";
 
   const fakeTitle = useMemo(() => {
     const length = faker.number.int({ min: 5, max: 8 });

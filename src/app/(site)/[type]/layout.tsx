@@ -1,15 +1,14 @@
 import { Container } from "@/components/Container";
 import { notFound } from "next/navigation";
 import { use, type PropsWithChildren } from "react";
-import { PostType, type PostsRouteParams } from ".";
+import type { PostsRouteProps } from ".";
 
-export type PagesLayoutProps = PropsWithChildren<{
-  params: Promise<PostsRouteParams>;
-}>;
+export const PostTypes = ["artikel", "kegiatan"];
 
-export const PostTypes = [PostType.article, PostType.event] as string[];
-
-export default function PagesLayout({ params, children }: PagesLayoutProps) {
+export default function PostsLayout({
+  params,
+  children,
+}: PropsWithChildren<PostsRouteProps>) {
   const { type } = use(params);
   if (!PostTypes.includes(type)) notFound();
   return <Container>{children}</Container>;

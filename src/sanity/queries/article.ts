@@ -1,17 +1,9 @@
 import type {
+  ArticleQueryFullResult,
   ArticleQueryResult,
-  ArticleTitleQueryResult,
 } from "@/generated/types/sanity";
 import { groq } from "next-sanity";
 import client from "./client";
-
-export const ArticleTitleQuery = groq`*[_type == "article" && slug.current == $slug][0].title`;
-
-export async function fetchArticleTitle(slug: string) {
-  return await client.fetch<ArticleTitleQueryResult>(ArticleTitleQuery, {
-    slug,
-  });
-}
 
 const ArticleQuery = groq`
 *[_type == "article" && defined(slug.current)][0]
@@ -20,11 +12,27 @@ const ArticleQuery = groq`
   title,
   slug,
   date,
-  thumbnail,
+  image
+}
+`;
+
+const ArticleQueryFull = groq`
+*[_type == "article" && defined(slug.current)][0]
+{
+  _id,
+  title,
+  slug,
+  date,
+  image,
   content
 }
 `;
 
-export async function fetchArticle(slug: string) {
-  return await client.fetch<ArticleQueryResult>(ArticleQuery, { slug });
+export async function fetchArticle<
+  F extends boolean = false,
+  R = F extends true ? ArticleQueryFullResult : ArticleQueryResult,
+>(slug: string, full?: F) {
+  return await client.fetch<R>(full ? ArticleQueryFull : ArticleQuery, {
+    slug,
+  });
 }

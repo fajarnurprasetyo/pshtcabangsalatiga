@@ -22,13 +22,13 @@ export default async function EventList(props: EventListProps) {
         .map((event) => (
           <Link key={event._id} href={`/event/${event.slug!.current}`}>
             <div className="relative bg-gray-200 shadow-md text-shadow-lg border border-gray-300 rounded-lg aspect-video overflow-hidden text-white">
-              {event.thumbnail && (
+              {event.image && (
                 <Image
                   width={640}
                   height={360}
                   loading="eager"
-                  alt={event.title ?? "Gambar thumbnail"}
-                  src={urlFor(event.thumbnail).size(640, 360).url()}
+                  alt={`Foto ${event.title}`}
+                  src={urlFor(event.image).size(640, 360).url()}
                 />
               )}
               <div className="top-0 absolute flex bg-linear-to-b from-black/80 to-black/0 px-3 pt-1 pb-3 w-full">

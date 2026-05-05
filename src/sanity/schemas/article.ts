@@ -1,5 +1,5 @@
 import { defineType } from "sanity";
-import { postFields } from "./fields";
+import { postFields } from "./post";
 
 export default defineType({
   name: "article",

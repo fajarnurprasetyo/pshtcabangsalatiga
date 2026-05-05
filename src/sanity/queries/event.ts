@@ -1,8 +1,8 @@
 import type {
   Event,
+  EventQueryFullResult,
   EventQueryResult,
-  EventsQueryResult,
-  EventTitleQueryResult,
+  EventsQueryResult
 } from "@/generated/types/sanity";
 import { groq } from "next-sanity";
 import z from "zod";
@@ -25,7 +25,7 @@ export const EventsQuery = groq`
   finishDate,
   fullDay,
   location,
-  thumbnail
+  image
 }
 `;
 
@@ -58,12 +58,6 @@ export async function fetchEvents<
   return await client.fetch<R>(EventsQuery, params);
 }
 
-export const EventTitleQuery = groq`*[_type == "event" && slug.current == $slug][0].title`;
-
-export async function fetchEventTitle(slug: string) {
-  return await client.fetch<EventTitleQueryResult>(EventTitleQuery, { slug });
-}
-
 export const EventQuery = groq`
 *[_type == "event" && slug.current == $slug][0]
 {
@@ -76,12 +70,31 @@ export const EventQuery = groq`
   finishDate,
   fullDay,
   location,
-  thumbnail,
+  image
+}
+`;
+
+export const EventQueryFull = groq`
+*[_type == "event" && slug.current == $slug][0]
+{
+  _id,
+  type,
+  title,
+  slug,
+  date,
+  startDate,
+  finishDate,
+  fullDay,
+  location,
+  image,
   content,
   "hasCertificate": count(*[_type == "certificate" && event._ref == ^._id]) > 0
 }
 `;
 
-export async function fetchEvent(slug: string) {
-  return await client.fetch<EventQueryResult>(EventQuery, { slug });
+export async function fetchEvent<
+  F extends boolean = false,
+  R = F extends true ? EventQueryFullResult : EventQueryResult,
+>(slug: string, full?: F) {
+  return await client.fetch<R>(full ? EventQueryFull : EventQuery, { slug });
 }

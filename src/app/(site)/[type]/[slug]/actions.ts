@@ -7,35 +7,55 @@ import { fetchEvent } from "@/sanity/queries/event";
 import { cacheTag, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
-export async function getArticle(slug: string) {
+export async function getArticle<F extends boolean = false>(
+  slug: string,
+  full: F = false as F,
+) {
   "use cache";
 
-  const data = await fetchArticle(slug);
+  const data = await fetchArticle(slug, full);
   if (!data) return null;
 
   const postId = data._id;
-  cacheTag(`article:${postId}`);
+  cacheTag(`article:${postId}`, `article:${postId}:${JSON.stringify(full)}`);
 
-  const likes = await prisma.postLike.findMany({
-    select: { userId: true, postId: true },
-    where: { postId },
-  });
+  const [views, likes] = await Promise.all([
+    prisma.postView
+      .findUniqueOrThrow({
+        select: { views: true },
+        where: { postId },
+      })
+      .then(({ views }) => views),
+    prisma.postLike.findMany({
+      select: { userId: true, postId: true },
+      where: { postId },
+    }),
+  ]);
 
-  return { ...data, likes };
+  return { ...data, views, likes };
 }
 
-export type Article = ReturnType<typeof getArticle>;
+export type Article<F extends boolean> = ReturnType<typeof getArticle<F>>;
 
-export async function getEvent(slug: string) {
+export async function getEvent<F extends boolean = false>(
+  slug: string,
+  full: F = false as F,
+) {
   "use cache";
 
-  const data = await fetchEvent(slug);
+  const data = await fetchEvent(slug, full);
   if (!data) return null;
 
   const postId = data._id;
-  cacheTag(`event:${postId}`);
+  cacheTag(`event:${postId}`, `event:${postId}:${JSON.stringify(full)}`);
 
-  const [likes, participants] = await Promise.all([
+  const [views, likes, participants] = await Promise.all([
+    prisma.postView
+      .findUniqueOrThrow({
+        select: { views: true },
+        where: { postId },
+      })
+      .then(({ views }) => views),
     prisma.postLike.findMany({
       select: { userId: true, postId: true },
       where: { postId },
@@ -46,10 +66,10 @@ export async function getEvent(slug: string) {
     }),
   ]);
 
-  return { ...data, likes, participants };
+  return { ...data, views, likes, participants };
 }
 
-export type Event = ReturnType<typeof getEvent>;
+export type Event<F extends boolean> = ReturnType<typeof getEvent<F>>;
 
 export async function joinEvent(postId: string) {
   const session = await auth();

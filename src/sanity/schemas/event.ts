@@ -1,6 +1,6 @@
 import { defineField, defineType } from "sanity";
 import LocationInput from "../components/LocationInput";
-import { postFields } from "./fields";
+import { postFields } from "./post";
 
 export default defineType({
   name: "event",

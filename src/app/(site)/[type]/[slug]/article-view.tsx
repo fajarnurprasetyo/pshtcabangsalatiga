@@ -8,11 +8,11 @@ import Link from "next/link";
 import { notFound, usePathname } from "next/navigation";
 import { use } from "react";
 import { FaHouse, FaShare, FaThumbsUp } from "react-icons/fa6";
-import type { getArticle } from "./actions";
+import type { Article } from "./actions";
 import { useViewUpdater } from "./hooks";
 
 export type ArticleViewProps = PropsWithNullableSession<{
-  article: ReturnType<typeof getArticle>;
+  article: Article<true>;
 }>;
 
 export default function ArticleView(props: ArticleViewProps) {
@@ -61,14 +61,14 @@ export default function ArticleView(props: ArticleViewProps) {
         </div>
       </div>
 
-      {article.thumbnail && (
+      {article.image && (
         <Image
           width={1920}
           height={1080}
           loading="eager"
           className="rounded-md w-full aspect-video"
-          alt={article.title ?? "Gambar thumbnail"}
-          src={urlFor(article.thumbnail).url()}
+          alt={`Foto ${article.title}`}
+          src={urlFor(article.image).url()}
         />
       )}
     </div>

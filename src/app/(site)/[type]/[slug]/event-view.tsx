@@ -23,11 +23,15 @@ import {
   FaUserPlus,
 } from "react-icons/fa6";
 import { useBoolean } from "react-use";
-import { joinEvent, updateLikePost, type getEvent } from "./actions";
+import {
+  joinEvent,
+  updateLikePost,
+  type Event
+} from "./actions";
 import { useViewUpdater } from "./hooks";
 
 export type EventViewProps = PropsWithNullableSession<{
-  event: ReturnType<typeof getEvent>;
+  event: Event<true>;
 }>;
 
 export default function EventView(props: EventViewProps) {
@@ -150,14 +154,14 @@ export default function EventView(props: EventViewProps) {
         </div>
       </div>
 
-      {event.thumbnail && (
+      {event.image && (
         <Image
           width={1920}
           height={1080}
           loading="eager"
           className="rounded-md w-full aspect-video"
-          alt={event.title ?? "Gambar thumbnail"}
-          src={urlFor(event.thumbnail).url()}
+          alt={`Foto ${event.title}`}
+          src={urlFor(event.image).url()}
         />
       )}
 

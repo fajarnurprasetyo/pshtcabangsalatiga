@@ -1,8 +1,7 @@
 import { auth } from "@/libs/auth";
-import { fetchArticleTitle, fetchEventTitle } from "@/sanity/queries";
 import type { Metadata, ResolvingMetadata } from "next";
 import { Suspense } from "react";
-import { PostType, type PostsRouteParams } from "..";
+import { type PostsRouteParams } from "..";
 import { getArticle, getEvent } from "./actions";
 import ArticleView from "./article-view";
 import EventView from "./event-view";
@@ -16,16 +15,20 @@ export async function generateMetadata(
   { params }: PostPageProps,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
+  const parentMetadata = await parent;
   const { type, slug } = await params;
 
-  const postTitle =
-    type === PostType.article
-      ? await fetchArticleTitle(slug)
-      : await fetchEventTitle(slug);
+  const post =
+    type === "artikel" ? await getArticle(slug) : await getEvent(slug);
 
-  return {
-    title: postTitle || (await parent).title?.absolute,
-  };
+  return post
+    ? {
+        title: post.title!,
+        openGraph: {
+          title: post.title!,
+        },
+      }
+    : (parentMetadata as Metadata);
 }
 
 export default async function PostPage(props: PostPageProps) {
@@ -34,10 +37,10 @@ export default async function PostPage(props: PostPageProps) {
 
   return (
     <Suspense fallback={<PostLoadingView type={type} />}>
-      {type === PostType.article ? (
-        <ArticleView session={session} article={getArticle(slug)} />
+      {type === "artikel" ? (
+        <ArticleView session={session} article={getArticle(slug, true)} />
       ) : (
-        <EventView session={session} event={getEvent(slug)} />
+        <EventView session={session} event={getEvent(slug, true)} />
       )}
     </Suspense>
   );

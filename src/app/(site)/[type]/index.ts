@@ -1,8 +1,7 @@
-export enum PostType {
-  article = "artikel",
-  event = "kegiatan",
-}
-
 export interface PostsRouteParams {
   type: string;
+}
+
+export interface PostsRouteProps {
+  params: Promise<PostsRouteParams>;
 }
