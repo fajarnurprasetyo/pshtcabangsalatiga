@@ -2,7 +2,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcrypt";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
+// import Facebook from "next-auth/providers/facebook";
+// import Google from "next-auth/providers/google";
 import { cookies } from "next/headers";
 import prisma from "./prisma";
 
@@ -81,15 +82,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return publicUser;
       },
     }),
-    Google({
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
-    }),
+    // Google({
+    //   authorization: {
+    //     params: {
+    //       prompt: "consent",
+    //       access_type: "offline",
+    //       response_type: "code",
+    //     },
+    //   },
+    // }),
+    // Facebook,
     // TikTok,
     // Passkey,
   ],

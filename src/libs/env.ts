@@ -20,6 +20,14 @@ const EnvSchema = z.object({
   DATABASE_URL: z.string().nonempty(),
   DATABASE_URL_UNPOOLED: z.string().nonempty(),
 
+  GOOGLE_CLIENT_EMAIL: z.string().nonempty(),
+  GOOGLE_PRIVATE_KEY: z
+    .string()
+    .nonempty()
+    .transform((v) => v.replace(/\\n/g, "\n")),
+  SPREADSHEET_ID: z.string().nonempty(),
+  SPREADSHEET_SHEET: z.string().nonempty(),
+  
   SANITY_WEBHOOK_SECRET: z.string().nonempty(),
   NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().nonempty(),
   NEXT_PUBLIC_SANITY_DATASET: z.string().nonempty(),
