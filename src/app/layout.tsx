@@ -10,6 +10,8 @@ export const metadata: Metadata = {
     template: "%s | PSHT Cabang Salatiga",
     default: "PSHT Cabang Salatiga",
   },
+  description:
+    "PSHT Cabang Salatiga merupakan organisasi pencak silat yang menjunjung tinggi nilai persaudaraan, pendidikan karakter, dan pembinaan bela diri bagi masyarakat di Salatiga.",
   keywords: [
     // Brand utama
     "PSHT Cabang Salatiga",
@@ -44,8 +46,6 @@ export const metadata: Metadata = {
     "organisasi pencak silat resmi di Salatiga",
     "kegiatan PSHT Cabang Salatiga Jawa Tengah",
   ],
-  description:
-    "Mendidik manusia berbudi luhur, tahu benar dan salah 🤝\nSALAM PERSAUDARAAN!",
 };
 
 const rootTheme = createTheme({

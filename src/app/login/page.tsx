@@ -6,8 +6,6 @@ import { signIn, type SignInOptions } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useActionState } from "react";
-import { CgSpinner } from "react-icons/cg";
-import { FcGoogle } from "react-icons/fc";
 import { HiKey, HiUser } from "react-icons/hi2";
 import { useBoolean, useCookie } from "react-use";
 
@@ -20,23 +18,24 @@ function LoginForm() {
     setRememberCookie(JSON.stringify(value));
   const remember = rememberCookie === "true";
 
-  const handleSignIn = async (provider: ProviderId, options?: SignInOptions) =>
+  const [loading, setLoading] = useBoolean(false);
+
+  const handleSignIn = async (
+    provider: ProviderId,
+    options?: SignInOptions,
+  ) => {
+    setLoading(true);
     await signIn(provider, { ...options, redirectTo: callbackUrl });
+    setLoading(false);
+  };
 
-  const [, submit, isPending] = useActionState(
-    async (_: void, formData: FormData) => {
-      await handleSignIn("credentials", {
-        login: formData.get("login"),
-        password: formData.get("password"),
-        remember: true,
-      });
-    },
-    undefined,
-  );
-
-  const [googleSignIn, setGoogleSignIn] = useBoolean(false);
-
-  const loading = isPending || googleSignIn;
+  const [, submit] = useActionState(async (_: void, formData: FormData) => {
+    await handleSignIn("credentials", {
+      login: formData.get("login"),
+      password: formData.get("password"),
+      remember: true,
+    });
+  }, undefined);
 
   return (
     <main className="flex flex-col self-center px-8 sm:px-16 py-10 sm:py-16 w-full max-w-2xl">
@@ -77,7 +76,7 @@ function LoginForm() {
         </div>
 
         <Button type="submit" disabled={loading}>
-          {isPending ? <CgSpinner className="animate-spin" /> : "Masuk"}
+          Masuk
         </Button>
       </form>
 
@@ -87,18 +86,25 @@ function LoginForm() {
         <HR className="flex-1" />
       </div>
 
+      {/* <Button
+        color="alternative"
+        disabled={loading}
+        className="gap-2"
+        onClick={() => handleSignIn("google")}
+      >
+        <FcGoogle />
+        Masuk dengan Google
+      </Button>
+
       <Button
         color="alternative"
         disabled={loading}
         className="gap-2"
-        onClick={() => {
-          setGoogleSignIn(true);
-          handleSignIn("google");
-        }}
+        onClick={() => handleSignIn("facebook")}
       >
-        {googleSignIn ? <CgSpinner className="animate-spin" /> : <FcGoogle />}
-        Masuk dengan Google
-      </Button>
+        <FaFacebookF />
+        Masuk dengan Facebook
+      </Button> */}
 
       <p className="mt-4 text-sm text-center select-none">
         Belum punya akun?&nbsp;

@@ -1,5 +1,5 @@
-import { CertificateQueryResult } from "@/generated/types/sanity";
 import { groq } from "next-sanity";
+import type { CertificateQueryResult } from "../types";
 import client from "./client";
 
 export const CertificateQuery = groq`

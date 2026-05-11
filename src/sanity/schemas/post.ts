@@ -26,6 +26,11 @@ export function postFields(insert: FieldDefinition[] = [], index: number = 4) {
       validation: (rule) => rule.required(),
     }),
     defineField({
+      type: "text",
+      name: "description",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       type: "array",
       name: "content",
       of: [{ type: "block" }],

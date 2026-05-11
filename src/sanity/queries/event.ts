@@ -3,7 +3,7 @@ import type {
   EventQueryFullResult,
   EventQueryResult,
   EventsQueryResult
-} from "@/generated/types/sanity";
+} from "@/sanity/types";
 import { groq } from "next-sanity";
 import z from "zod";
 import client from "./client";

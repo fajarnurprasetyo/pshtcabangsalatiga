@@ -1,8 +1,8 @@
 "use server";
 
-import type { Event } from "@/generated/types/sanity";
 import prisma from "@/libs/prisma";
 import { fetchEvents } from "@/sanity/queries/event";
+import type { Event } from "@/sanity/types";
 import { cacheTag } from "next/cache";
 
 export async function getEvents(type: NonNullable<Event["type"]>) {

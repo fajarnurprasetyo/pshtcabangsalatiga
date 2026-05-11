@@ -1,7 +1,7 @@
 import type {
   ArticleQueryFullResult,
   ArticleQueryResult,
-} from "@/generated/types/sanity";
+} from "@/sanity/types";
 import { groq } from "next-sanity";
 import client from "./client";
 
