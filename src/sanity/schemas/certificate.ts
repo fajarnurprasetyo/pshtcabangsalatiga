@@ -1,5 +1,5 @@
+import { apiVersion } from "@/sanity/env";
 import { defineField, defineType } from "sanity";
-import { apiVersion } from "../env";
 
 export default defineType({
   name: "certificate",

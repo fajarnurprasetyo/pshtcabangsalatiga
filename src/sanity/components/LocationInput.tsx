@@ -1,9 +1,9 @@
+import { googleMapsApiKey } from "@/sanity/env";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import type { Geopoint } from "@sanity/google-maps-input";
 import { TextInput } from "@sanity/ui";
 import { useState } from "react";
 import { set, type ObjectInputProps } from "sanity";
-import { googleMapsApiKey } from "../env";
 
 const defaultCenter = {
   lat: -7.330153687367675,

@@ -1,12 +1,8 @@
-import {
-  NextResponse
-} from "next/server";
-import { auth } from "./libs/auth";
+import { NextResponse, type NextRequest } from "next/server";
 
 const botRegEx =
   /facebookexternalhit|Facebot|Twitterbot|Slackbot|Discordbot|LinkedInBot|WhatsApp/i;
 
-export default auth((req) => {
-  const ua = req.headers.get("user-agent") || "";
-  if (botRegEx.test(ua)) return NextResponse.next();
-});
+export default function proxy(req: NextRequest) {
+  return NextResponse.next();
+}

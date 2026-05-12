@@ -1,4 +1,4 @@
-import { auth } from "@/libs/auth";
+import { getSession } from "@/libs/react";
 import { urlFor } from "@/sanity/image";
 import type { Metadata } from "next";
 import { Suspense } from "react";
@@ -34,7 +34,7 @@ export async function generateMetadata({
 }
 
 export default async function PostPage(props: PostPageProps) {
-  const session = await auth();
+  const session = await getSession();
   const { type, slug } = await props.params;
 
   return (

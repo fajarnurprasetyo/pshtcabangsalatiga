@@ -1,1 +1,1 @@
-export { default } from "./src/sanity/config";
+export { default } from "@/sanity/config";

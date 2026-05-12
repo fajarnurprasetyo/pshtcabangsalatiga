@@ -1,5 +1,5 @@
+import options from "@/sanity/options";
 import { createClient } from "next-sanity";
-import options from "../options";
 
 export default createClient({
   ...options,

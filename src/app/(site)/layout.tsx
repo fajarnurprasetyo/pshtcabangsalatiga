@@ -1,6 +1,7 @@
 "use server";
 
-import { auth, signOut } from "@/libs/auth";
+import { signOut } from "@/libs/auth";
+import { getSession } from "@/libs/react";
 import {
   Avatar,
   Dropdown,
@@ -8,7 +9,6 @@ import {
   DropdownHeader,
   DropdownItem,
 } from "flowbite-react";
-import { headers } from "next/headers";
 import Link from "next/link";
 import { type PropsWithChildren } from "react";
 import {
@@ -22,13 +22,11 @@ import { HiArrowRightStartOnRectangle, HiCog6Tooth } from "react-icons/hi2";
 import SignInButton from "./signin-button";
 
 export default async function SiteLayoute({ children }: PropsWithChildren) {
-  const session = await auth();
-  const headersList = await headers();
-  const pathname = headersList.get("x-pathname");
+  const session = await getSession();
 
   return (
     <>
-      <header key={pathname} className="top-0 z-10 sticky">
+      <header className="top-0 z-10 sticky">
         <div className="flex justify-between items-center bg-black px-3 md:px-4 py-2 md:py-3">
           <Link href="/">
             <div className="relative bg-[url(/assets/images/logo_main.png)] bg-cover w-[150px] md:w-[218px] h-[40px] md:h-[58px]" />

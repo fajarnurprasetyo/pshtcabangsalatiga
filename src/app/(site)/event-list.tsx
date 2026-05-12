@@ -12,7 +12,7 @@ export interface EventListProps {
   events: Events;
 }
 
-export default async function EventList(props: EventListProps) {
+export default function EventList(props: EventListProps) {
   const events = use(props.events);
 
   return (
