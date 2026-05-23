@@ -1,12 +1,13 @@
 import { Container } from "@/components/Container";
-import { auth, signIn } from "@/libs/auth";
+import { signIn } from "@/libs/auth";
+import { getSession } from "@/libs/react";
 import { Button, Tooltip } from "flowbite-react";
 import Image from "next/image";
 import { HiArrowUpTray, HiUser } from "react-icons/hi2";
 import Form from "./form";
 
 export default async function UserProfilePage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session) return await signIn();
 
   const user = session.user;

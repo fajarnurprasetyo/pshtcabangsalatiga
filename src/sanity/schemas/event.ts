@@ -1,5 +1,5 @@
+import LocationInput from "@/sanity/components/LocationInput";
 import { defineField, defineType } from "sanity";
-import LocationInput from "../components/LocationInput";
 import { postFields } from "./post";
 
 export default defineType({

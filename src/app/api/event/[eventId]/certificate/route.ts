@@ -8,7 +8,7 @@ import { type Session } from "next-auth";
 import { NextResponse, type NextRequest } from "next/server";
 import path from "path";
 
-registerFont(path.join(process.cwd(), "public/assets/fonts/arial-bold.ttf"), {
+registerFont(path.join(process.cwd(), "public/fonts/arial-bold.ttf"), {
   family: "Arial",
   weight: "bold",
 });

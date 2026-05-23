@@ -139,26 +139,67 @@ function columnName(col: number) {
   return String.fromCharCode(65 + col);
 }
 
-async function findRowIndex<
+export async function fetchRows<
+  const F extends readonly [SheetKey, ...SheetKey[]],
+  R extends Pick<Data, F[number]>,
+>(fields: F): Promise<R[]> {
+  const res = await sheets.spreadsheets.values.batchGet({
+    spreadsheetId: Env.SPREADSHEET_ID,
+    valueRenderOption: "UNFORMATTED_VALUE",
+    ranges: [
+      ...fields.map((col) => {
+        const colName = columnName(SheetKeys.indexOf(col) + 1);
+        return `${Env.SPREADSHEET_SHEET}!${colName}:${colName}`;
+      }),
+    ],
+  });
+
+  const columns = res.data.valueRanges?.map((v) => v.values || []) || [];
+  const maxRows = Math.max(...columns.map((col) => col.length));
+
+  for (let i = 0; i < fields.length; i++) {
+    const expectedHeader = SHEET_HEADER[SheetKeys.indexOf(fields[i])];
+    if (columns[i][0]?.[0] !== expectedHeader) return [];
+  }
+
+  const rows: R[] = [];
+
+  for (let i = 1; i < maxRows; i++) {
+    const obj: Record<string, any> = {};
+
+    for (let j = 0; j < fields.length; j++) {
+      obj[fields[j]] = columns[j][i]?.[0];
+    }
+
+    const parse = PartialDataSchema.safeParse(obj);
+    if (!parse.success) continue;
+
+    rows.push(parse.data as R);
+  }
+
+  return rows;
+}
+
+export async function findRowIndex<
   const F extends readonly [SheetKey, ...SheetKey[]],
   P extends Pick<Data, F[number]>,
 >(fields: F, predicate: P | ((data: P) => boolean)): Promise<number>;
-async function findRowIndex(predicate: Partial<Data>): Promise<number>;
-async function findRowIndex(
+export async function findRowIndex(predicate: Partial<Data>): Promise<number>;
+export async function findRowIndex(
   arg_0: Partial<Data> | [SheetKey, ...SheetKey[]],
   arg_1?: Partial<Data> | ((data: Partial<Data>) => boolean),
 ) {
-  let fields!: SheetKey[];
+  let fields!: [SheetKey, ...SheetKey[]];
   let predicate: Partial<Data> = {};
   let match: ((data: Partial<Data>) => boolean) | undefined;
 
   if (!Array.isArray(arg_0)) {
     fields = (Object.keys(arg_0) as SheetKey[]).filter(
       (k) => arg_0[k] !== undefined,
-    );
+    ) as [SheetKey, ...SheetKey[]];
     predicate = arg_0;
   } else {
-    fields = [...new Set(arg_0)];
+    fields = [...new Set(arg_0)] as [SheetKey, ...SheetKey[]];
     if (typeof arg_1 === "object") {
       predicate = arg_1;
     } else if (arg_1) {
@@ -177,37 +218,24 @@ async function findRowIndex(
     };
   }
 
-  const res = await sheets.spreadsheets.values.batchGet({
-    spreadsheetId: Env.SPREADSHEET_ID,
-    valueRenderOption: "UNFORMATTED_VALUE",
-    ranges: [
-      ...fields.map((col) => {
-        const colName = columnName(SheetKeys.indexOf(col) + 1);
-        return `${Env.SPREADSHEET_SHEET}!${colName}:${colName}`;
-      }),
-    ],
-  });
+  const rows = await fetchRows(fields);
 
-  const columns = res.data.valueRanges?.map((v) => v.values || []) || [];
-  const maxRows = Math.max(...columns.map((col) => col.length));
-
-  for (let i = 0; i < fields.length; i++) {
-    const expectedHeader = SHEET_HEADER[SheetKeys.indexOf(fields[i])];
-    if (columns[i][0]?.[0] !== expectedHeader) return -1;
+  for (const row of rows) {
+    if (match(row)) return rows.indexOf(row) + 2;
   }
 
-  for (let i = 1; i < maxRows; i++) {
-    const obj: Record<string, any> = {};
+  // for (let i = 1; i < maxRows; i++) {
+  //   const obj: Record<string, any> = {};
 
-    for (let j = 0; j < fields.length; j++) {
-      obj[fields[j]] = columns[j][i]?.[0];
-    }
+  //   for (let j = 0; j < fields.length; j++) {
+  //     obj[fields[j]] = columns[j][i]?.[0];
+  //   }
 
-    const parse = PartialDataSchema.safeParse(obj);
-    if (!parse.success) continue;
+  //   const parse = PartialDataSchema.safeParse(obj);
+  //   if (!parse.success) continue;
 
-    if (match(parse.data)) return i + 1;
-  }
+  //   if (match(parse.data)) return i + 1;
+  // }
 
   return -1;
 }
@@ -311,8 +339,6 @@ export async function fetchPicture(nik: string) {
       q: `'1in--L6bTLZQ983N_Wo4HhTf80jnpzj6q' in parents and name contains '${nik}' and trashed = false`,
       fields: "files(id)",
     });
-
-    console.log(files);
 
     const file = files?.[0];
     if (!file?.id) return null;

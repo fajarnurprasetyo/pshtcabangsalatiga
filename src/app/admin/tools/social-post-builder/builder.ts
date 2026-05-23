@@ -1,12 +1,12 @@
 "use client";
 
-import background from "@/images/social-post-builder/background.png";
-import brandDark from "@/images/social-post-builder/brand-dark.png";
-import brandLight from "@/images/social-post-builder/brand-light.png";
-import hashtagDark from "@/images/social-post-builder/hashtag-dark.png";
-import hashtagLight from "@/images/social-post-builder/hashtag-light.png";
-import logo from "@/images/social-post-builder/logo.png";
-import social from "@/images/social-post-builder/social.png";
+import background from "@/static/images/social-post-builder/background.png";
+import brandDark from "@/static/images/social-post-builder/brand-dark.png";
+import brandLight from "@/static/images/social-post-builder/brand-light.png";
+import hashtagDark from "@/static/images/social-post-builder/hashtag-dark.png";
+import hashtagLight from "@/static/images/social-post-builder/hashtag-light.png";
+import logo from "@/static/images/social-post-builder/logo.png";
+import social from "@/static/images/social-post-builder/social.png";
 import {
   Canvas,
   FabricImage,

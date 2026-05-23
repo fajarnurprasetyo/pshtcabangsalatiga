@@ -1,13 +1,8 @@
 "use client";
 
+import { Container } from "@/components/Container";
 import { UserRole, type Branch } from "@/generated/prisma/browser";
 import { UsernameSchema } from "@/schemas/user";
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxOption,
-  ComboboxOptions,
-} from "@headlessui/react";
 import {
   Button,
   HelperText,
@@ -18,7 +13,8 @@ import {
 } from "flowbite-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { Suspense, useRef, useState, type SubmitEvent } from "react";
+import { notFound, useSearchParams } from "next/navigation";
+import { useRef, useState, type SubmitEvent } from "react";
 import { CgSpinner } from "react-icons/cg";
 import { FaCheck, FaXmark } from "react-icons/fa6";
 import { useBoolean, useDebounce, useToggle } from "react-use";
@@ -234,7 +230,7 @@ function Form({ callbackUrl }: FromProps) {
       </div>
 
       <div>
-        <Combobox
+        {/* <Combobox
           value={branch}
           onChange={setBranch}
           onClose={() => setBranchQuery("")}
@@ -295,7 +291,7 @@ function Form({ callbackUrl }: FromProps) {
               </ComboboxOptions>
             )}
           </div>
-        </Combobox>
+        </Combobox> */}
       </div>
 
       <div>
@@ -346,40 +342,38 @@ function Form({ callbackUrl }: FromProps) {
   );
 }
 
-export interface RegisterPageProps {
-  searchParams: Promise<FromProps>;
-}
+export default function RegisterPage() {
+  notFound();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
-export default function RegisterPage({ searchParams }: RegisterPageProps) {
   return (
-    <Suspense>
-      {searchParams.then(({ callbackUrl }) => (
-        <main className="self-center px-8 sm:px-16 py-10 sm:py-16 w-full max-w-2xl">
-          <h1 className="font-semibold text-3xl text-center select-none">
-            Daftar
-          </h1>
+    <main className="flex flex-1 justify-center items-center">
+      <Container className="rounded-xl max-w-xl">
+        <h1 className="font-semibold text-3xl text-center select-none">
+          Daftar
+        </h1>
 
-          <HR />
+        <HR />
 
-          <Form callbackUrl={callbackUrl} />
+        <Form callbackUrl={callbackUrl} />
 
-          <div className="flex items-center gap-4">
-            <HR className="flex-1" />
-            <span className="text-sm select-none">atau</span>
-            <HR className="flex-1" />
-          </div>
+        <div className="flex items-center gap-4">
+          <HR className="flex-1" />
+          <span className="text-sm select-none">atau</span>
+          <HR className="flex-1" />
+        </div>
 
-          <p className="text-sm text-center select-none">
-            Sudah punya akun?&nbsp;
-            <Link
-              href={`/login?callbackUrl=${callbackUrl}`}
-              className="font-medium text-primary-700 hover:underline"
-            >
-              Masuk
-            </Link>
-          </p>
-        </main>
-      ))}
-    </Suspense>
+        <p className="text-sm text-center select-none">
+          Sudah punya akun?&nbsp;
+          <Link
+            href={`/login?callbackUrl=${callbackUrl}`}
+            className="font-medium text-primary-700 hover:underline"
+          >
+            Masuk
+          </Link>
+        </p>
+      </Container>
+    </main>
   );
 }

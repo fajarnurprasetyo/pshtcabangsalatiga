@@ -23,11 +23,7 @@ import {
   FaUserPlus,
 } from "react-icons/fa6";
 import { useBoolean } from "react-use";
-import {
-  joinEvent,
-  updateLikePost,
-  type Event
-} from "./actions";
+import { joinEvent, updateLikePost, type Event } from "./actions";
 import { useViewUpdater } from "./hooks";
 
 export type EventViewProps = PropsWithNullableSession<{
@@ -192,6 +188,7 @@ export default function EventView(props: EventViewProps) {
         {event.hasCertificate && eventPassed && joined && (
           <Button
             pill
+            disabled
             className="gap-2"
             onClick={() =>
               downloadCertificate(session!.user, event._id, event.title)
