@@ -3,11 +3,10 @@ import { NextResponse } from "next/server";
 
 export default auth((req) => {
   const { pathname, search } = req.nextUrl;
-  console.log(`[Middleware] ${pathname} - ${req.headers.get("user-agent")}`);
 
   if (
-    !pathname.endsWith("/")
-    // && !pathname.match(/((?!\.well-known(?:\/.*)?)(?:[^/]+\/)*[^/]+\.\w+)/)
+    !pathname.endsWith("/") &&
+    !pathname.match(/((?!\.well-known(?:\/.*)?)(?:[^/]+\/)*[^/]+\.\w+)/)
   ) {
     return NextResponse.redirect(
       new URL(`${req.nextUrl.pathname}/`, req.nextUrl),
