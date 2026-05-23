@@ -1,8 +1,40 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { auth } from "@/libs/auth";
+import { NextResponse } from "next/server";
 
-const botRegEx =
-  /facebookexternalhit|Facebot|Twitterbot|Slackbot|Discordbot|LinkedInBot|WhatsApp/i;
+export default auth((req) => {
+  const { pathname, search } = req.nextUrl;
+  console.log(`[Middleware] ${pathname} - ${req.headers.get("user-agent")}`);
 
-export default function proxy(req: NextRequest) {
-  return NextResponse.next();
-}
+  if (
+    !pathname.endsWith("/")
+    // && !pathname.match(/((?!\.well-known(?:\/.*)?)(?:[^/]+\/)*[^/]+\.\w+)/)
+  ) {
+    return NextResponse.redirect(
+      new URL(`${req.nextUrl.pathname}/`, req.nextUrl),
+    );
+  }
+
+  if (pathname.startsWith("/admin")) {
+    if (!req.auth) {
+      return NextResponse.redirect(
+        new URL(
+          `/login/?callbackUrl=${encodeURIComponent(`${pathname}${search}`)}`,
+          req.nextUrl,
+        ),
+      );
+    }
+  }
+});
+
+export const config = {
+  matcher: [
+    {
+      source:
+        "/((?!api|_next/static|_next/image|static/|.*.png$|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest).*)",
+      // missing: [
+      //   { type: "header", key: "next-router-prefetch" },
+      //   { type: "header", key: "purpose", value: "prefetch" },
+      // ],
+    },
+  ],
+};

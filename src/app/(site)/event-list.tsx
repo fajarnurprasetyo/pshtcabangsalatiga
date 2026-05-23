@@ -20,7 +20,7 @@ export default function EventList(props: EventListProps) {
       {events
         .filter(({ slug }) => slug)
         .map((event) => (
-          <Link key={event._id} href={`/event/${event.slug!.current}`}>
+          <Link key={event._id} href={`/kegiatan/${event.slug!.current}/`}>
             <div className="relative bg-gray-200 shadow-md text-shadow-lg border border-gray-300 rounded-lg aspect-video overflow-hidden text-white">
               {event.image && (
                 <Image

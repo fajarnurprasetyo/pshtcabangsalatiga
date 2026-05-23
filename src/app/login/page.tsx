@@ -1,11 +1,13 @@
 "use client";
 
+import { Container } from "@/components/Container";
 import type { ProviderId } from "@auth/core/providers";
 import { Button, Checkbox, HR, Label, TextInput } from "flowbite-react";
 import { signIn, type SignInOptions } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useActionState } from "react";
+import { FaFacebookF, FaGoogle } from "react-icons/fa6";
 import { HiKey, HiUser } from "react-icons/hi2";
 import { useBoolean, useCookie } from "react-use";
 
@@ -38,83 +40,89 @@ function LoginForm() {
   }, undefined);
 
   return (
-    <main className="flex flex-col self-center px-8 sm:px-16 py-10 sm:py-16 w-full max-w-2xl">
-      <h1 className="font-semibold text-3xl text-center select-none">Masuk</h1>
+    <main className="flex flex-1 justify-center items-center h-dvh">
+      <Container className="rounded-xl max-w-sm">
+        <h1 className="font-semibold text-3xl text-center select-none">
+          Masuk
+        </h1>
 
-      <HR />
+        <HR />
 
-      <form action={submit} className="flex flex-col gap-4">
-        <TextInput
-          required
-          autoFocus
-          type="text"
-          name="login"
-          icon={HiUser}
-          placeholder="Nama Pengguna / Email / Telepon"
-        />
+        <form action={submit} className="flex flex-col gap-4">
+          <TextInput
+            required
+            autoFocus
+            type="text"
+            name="login"
+            icon={HiUser}
+            placeholder="Nama Pengguna / Email / Telepon"
+          />
 
-        <TextInput
-          required
-          type="password"
-          name="password"
-          icon={HiKey}
-          placeholder="Kata Sandi"
-        />
+          <TextInput
+            required
+            type="password"
+            name="password"
+            icon={HiKey}
+            placeholder="Kata Sandi"
+          />
 
-        <div className="flex justify-between items-center select-none">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="remember"
-              checked={remember}
-              onChange={({ target }) => setRemember(target.checked)}
-            />
-            <Label htmlFor="remember">Ingat saya</Label>
+          <div className="flex justify-between items-center select-none">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="remember"
+                checked={remember}
+                onChange={({ target }) => setRemember(target.checked)}
+              />
+              <Label htmlFor="remember">Ingat saya</Label>
+            </div>
+            <button className="focus:outline-0 text-primary-700 text-sm hover:underline focus:underline cursor-pointer">
+              Lupa kata sandi?
+            </button>
           </div>
-          <button className="focus:outline-0 text-primary-700 text-sm hover:underline focus:underline cursor-pointer">
-            Lupa kata sandi?
-          </button>
+
+          <Button type="submit" disabled={loading}>
+            Masuk
+          </Button>
+        </form>
+
+        <div hidden className="flex items-center gap-4">
+          <HR className="flex-1" />
+          <span className="text-sm select-none">atau</span>
+          <HR className="flex-1" />
         </div>
 
-        <Button type="submit" disabled={loading}>
-          Masuk
-        </Button>
-      </form>
+        <div hidden className="flex flex-col gap-3">
+          <Button
+            color="alternative"
+            disabled={loading}
+            className="gap-2"
+            onClick={() => handleSignIn("google")}
+          >
+            <FaGoogle />
+            Masuk dengan Google
+          </Button>
 
-      <div className="flex items-center gap-4">
-        <HR className="flex-1" />
-        <span className="text-sm select-none">atau</span>
-        <HR className="flex-1" />
-      </div>
+          <Button
+            color="alternative"
+            disabled={loading}
+            className="gap-2"
+            onClick={() => handleSignIn("facebook")}
+          >
+            <FaFacebookF />
+            Masuk dengan Facebook
+          </Button>
 
-      {/* <Button
-        color="alternative"
-        disabled={loading}
-        className="gap-2"
-        onClick={() => handleSignIn("google")}
-      >
-        <FcGoogle />
-        Masuk dengan Google
-      </Button>
-
-      <Button
-        color="alternative"
-        disabled={loading}
-        className="gap-2"
-        onClick={() => handleSignIn("facebook")}
-      >
-        <FaFacebookF />
-        Masuk dengan Facebook
-      </Button> */}
-
-      <p className="mt-4 text-sm text-center select-none">
-        Belum punya akun?&nbsp;
-        <Link
-          href={`/register?callbackUrl=${callbackUrl}`}
-          className="font-medium text-primary-700 hover:underline"
-        >
-          Daftar sekarang
-        </Link>
-      </p>
+          <p className="text-sm text-center select-none">
+            Belum punya akun?&nbsp;
+            <Link
+              href={`/register?callbackUrl=${callbackUrl}`}
+              className="font-medium text-primary-700 hover:underline"
+            >
+              Daftar sekarang
+            </Link>
+          </p>
+        </div>
+      </Container>
     </main>
   );
 }

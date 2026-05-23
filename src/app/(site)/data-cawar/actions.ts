@@ -1,11 +1,11 @@
 "use server";
 
 import { fetchPicture, searchDataByNik, updateData } from "@/libs/google";
-import { revalidateTag } from "next/cache";
+import { cacheTag, revalidateTag } from "next/cache";
 
 export async function fetchData(nik: string) {
-  // "use cache";
-  // cacheTag(nik);
+  "use cache";
+  cacheTag(`data-cawar:${nik}`);
 
   const data = await searchDataByNik(nik);
   if (!data) return null;
@@ -19,6 +19,6 @@ export type Data = Awaited<ReturnType<typeof fetchData>>;
 
 export async function saveData(nik: string, data: Omit<Data, "nik">) {
   const success = await updateData(nik, data);
-  if (success) revalidateTag(nik, "max");
+  if (success) revalidateTag(`data-cawar:${nik}`, "max");
   return success;
 }

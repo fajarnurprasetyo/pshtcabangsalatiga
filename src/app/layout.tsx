@@ -52,6 +52,11 @@ const rootTheme = createTheme({
   button: {
     base: "cursor-pointer",
   },
+  modal: {
+    header: {
+      base: "border-gray-200",
+    },
+  },
 });
 
 export default function RootLayout({ children }: PropsWithChildren) {
@@ -61,7 +66,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <AuthProvider>
           <ThemeProvider theme={rootTheme}>
             <DownloadCertificateModalProvider>
-              <body className="flex flex-col min-h-dvh">{children}</body>
+              <body className="bg-gray-100">{children}</body>
             </DownloadCertificateModalProvider>
           </ThemeProvider>
         </AuthProvider>
