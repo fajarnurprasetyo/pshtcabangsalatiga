@@ -63,7 +63,9 @@ export default function Form() {
     setSaving(true);
     const data = {
       ...update,
-      tanggalLahir: dayjs(update.tanggalLahir).format("DD/MM/YYYY"),
+      tanggalLahir: update.tanggalLahir
+        ? dayjs(update.tanggalLahir).format("DD/MM/YYYY")
+        : undefined,
     };
     const success = await saveData(nik!, data);
     setSaving(false);

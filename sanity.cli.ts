@@ -1,11 +1,7 @@
-/**
- * This configuration file lets you run `$ sanity [command]` in this folder
- * Go to https://www.sanity.io/docs/cli to learn more.
- **/
-import options from "@/sanity/options";
 import { defineCliConfig } from "sanity/cli";
+import options from "./src/sanity/options";
 
-const BASE_PATH = "@/sanity";
+const BASE_PATH = "./src/sanity";
 const SCHEMA_PATH = `${BASE_PATH}/types.json`;
 const TYPES_PATH = `${BASE_PATH}/types.d.ts`;
 

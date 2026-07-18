@@ -25,26 +25,18 @@ export default async function seedUser() {
     });
   }
 
-  await prisma.$transaction(async (tx) => {
-    const users = await tx.user.findMany({
-      where: { person: null },
-    });
+  const users = await prisma.user.findMany({
+    where: { person: null },
+  });
 
-    if (users.length === 0) return;
-    console.log("Patching existing User...");
+  if (users.length === 0) return;
+  console.log("Patching existing User...");
 
-    for (const user of users) {
-      await tx.person.create({
-        data: {
-          name: user.name,
-          ...(user.branchId && {
-            branch: user.branchId
-              ? { connect: { id: user.branchId } }
-              : undefined,
-          }),
-          user: { connect: { id: user.id } },
-        },
-      });
-    }
+  await prisma.person.createMany({
+    data: users.map((user) => ({
+      name: user.name,
+      branchId: user.branchId || undefined,
+      userId: user.id,
+    })),
   });
 }
