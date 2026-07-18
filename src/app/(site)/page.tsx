@@ -7,7 +7,7 @@ export default async function HomePage() {
   return (
     <Container>
       <Suspense fallback="LOADING...">
-        <EventList events={getEvents("seminar")} />
+        <EventList events={getEvents("competition")} />
       </Suspense>
     </Container>
   );

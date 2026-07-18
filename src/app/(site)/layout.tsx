@@ -116,13 +116,13 @@ export default async function SiteLayoute({ children }: PropsWithChildren) {
           <a target="_blank" href="https://facebook.com/pshtsalatiga">
             <FaFacebook />
           </a>
-          <a target="_blank" href="https://instagram.com/pshtcabangsalatiga">
+          <a target="_blank" href="https://instagram.com/pshtsalatiga">
             <FaInstagram />
           </a>
-          <a target="_blank" href="https://tiktok.com/@pshtcabangsalatiga">
+          <a target="_blank" href="https://tiktok.com/@pshtsalatiga">
             <FaTiktok />
           </a>
-          <a target="_blank" href="https://youtube.com/@pshtcabangsalatiga">
+          <a target="_blank" href="https://youtube.com/@pshtsalatiga">
             <FaYoutube />
           </a>
         </div>

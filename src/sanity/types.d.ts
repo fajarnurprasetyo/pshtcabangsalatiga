@@ -276,7 +276,7 @@ export type AllSanitySchemaTypes =
 
 // Source: src/sanity/queries/article.ts
 // Variable: ArticleQuery
-// Query: *[_type == "article" && defined(slug.current)][0]{  _id,  title,  slug,  date,  image}
+// Query: *[_type == "article" && defined(slug.current)][0]{  _id,  title,  slug,  date,  image,  description}
 export type ArticleQueryResult = {
   _id: string;
   title: string | null;
@@ -289,11 +289,12 @@ export type ArticleQueryResult = {
     crop?: SanityImageCrop;
     _type: "image";
   } | null;
+  description: string | null;
 } | null;
 
 // Source: src/sanity/queries/article.ts
 // Variable: ArticleQueryFull
-// Query: *[_type == "article" && defined(slug.current)][0]{  _id,  title,  slug,  date,  image,  content}
+// Query: *[_type == "article" && defined(slug.current)][0]{  _id,  title,  slug,  date,  image,  description,  content}
 export type ArticleQueryFullResult = {
   _id: string;
   title: string | null;
@@ -306,6 +307,7 @@ export type ArticleQueryFullResult = {
     crop?: SanityImageCrop;
     _type: "image";
   } | null;
+  description: string | null;
   content: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -374,7 +376,7 @@ export type EventsQueryResult = Array<{
 
 // Source: src/sanity/queries/event.ts
 // Variable: EventQuery
-// Query: *[_type == "event" && slug.current == $slug][0]{  _id,  type,  title,  slug,  date,  startDate,  finishDate,  fullDay,  location,  image}
+// Query: *[_type == "event" && slug.current == $slug][0]{  _id,  type,  title,  slug,  date,  startDate,  finishDate,  fullDay,  location,  image,  description}
 export type EventQueryResult = {
   _id: string;
   type: "competition" | "seminar" | null;
@@ -396,11 +398,12 @@ export type EventQueryResult = {
     crop?: SanityImageCrop;
     _type: "image";
   } | null;
+  description: string | null;
 } | null;
 
 // Source: src/sanity/queries/event.ts
 // Variable: EventQueryFull
-// Query: *[_type == "event" && slug.current == $slug][0]{  _id,  type,  title,  slug,  date,  startDate,  finishDate,  fullDay,  location,  image,  content,  "hasCertificate": count(*[_type == "certificate" && event._ref == ^._id]) > 0}
+// Query: *[_type == "event" && slug.current == $slug][0]{  _id,  type,  title,  slug,  date,  startDate,  finishDate,  fullDay,  location,  image,  description,  content,  "hasCertificate": count(*[_type == "certificate" && event._ref == ^._id]) > 0}
 export type EventQueryFullResult = {
   _id: string;
   type: "competition" | "seminar" | null;
@@ -422,6 +425,7 @@ export type EventQueryFullResult = {
     crop?: SanityImageCrop;
     _type: "image";
   } | null;
+  description: string | null;
   content: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -447,11 +451,11 @@ export type EventQueryFullResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '\n*[_type == "article" && defined(slug.current)][0]\n{\n  _id,\n  title,\n  slug,\n  date,\n  image\n}\n': ArticleQueryResult;
-    '\n*[_type == "article" && defined(slug.current)][0]\n{\n  _id,\n  title,\n  slug,\n  date,\n  image,\n  content\n}\n': ArticleQueryFullResult;
+    '\n*[_type == "article" && defined(slug.current)][0]\n{\n  _id,\n  title,\n  slug,\n  date,\n  image,\n  description\n}\n': ArticleQueryResult;
+    '\n*[_type == "article" && defined(slug.current)][0]\n{\n  _id,\n  title,\n  slug,\n  date,\n  image,\n  description,\n  content\n}\n': ArticleQueryFullResult;
     '\n*[_type == "certificate" && event._ref == $eventId][0]\n{event->{_id, title, startDate, finishDate, fullDay}, image}\n': CertificateQueryResult;
     '\n*[\n  _type == "event"\n  && defined(slug.current)\n  && (!defined($type) || type == $type)\n]\n|order(date desc)[$start...$end]\n{\n  _id,\n  type,\n  title,\n  slug,\n  date,\n  startDate,\n  finishDate,\n  fullDay,\n  location,\n  image\n}\n': EventsQueryResult;
-    '\n*[_type == "event" && slug.current == $slug][0]\n{\n  _id,\n  type,\n  title,\n  slug,\n  date,\n  startDate,\n  finishDate,\n  fullDay,\n  location,\n  image\n}\n': EventQueryResult;
-    '\n*[_type == "event" && slug.current == $slug][0]\n{\n  _id,\n  type,\n  title,\n  slug,\n  date,\n  startDate,\n  finishDate,\n  fullDay,\n  location,\n  image,\n  content,\n  "hasCertificate": count(*[_type == "certificate" && event._ref == ^._id]) > 0\n}\n': EventQueryFullResult;
+    '\n*[_type == "event" && slug.current == $slug][0]\n{\n  _id,\n  type,\n  title,\n  slug,\n  date,\n  startDate,\n  finishDate,\n  fullDay,\n  location,\n  image,\n  description\n}\n': EventQueryResult;
+    '\n*[_type == "event" && slug.current == $slug][0]\n{\n  _id,\n  type,\n  title,\n  slug,\n  date,\n  startDate,\n  finishDate,\n  fullDay,\n  location,\n  image,\n  description,\n  content,\n  "hasCertificate": count(*[_type == "certificate" && event._ref == ^._id]) > 0\n}\n': EventQueryFullResult;
   }
 }

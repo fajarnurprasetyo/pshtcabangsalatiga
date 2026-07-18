@@ -70,7 +70,8 @@ export const EventQuery = groq`
   finishDate,
   fullDay,
   location,
-  image
+  image,
+  description
 }
 `;
 
@@ -87,6 +88,7 @@ export const EventQueryFull = groq`
   fullDay,
   location,
   image,
+  description,
   content,
   "hasCertificate": count(*[_type == "certificate" && event._ref == ^._id]) > 0
 }

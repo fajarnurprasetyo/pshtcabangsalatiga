@@ -50,12 +50,18 @@ export async function getEvent<F extends boolean = false>(
   cacheTag(`event:${postId}`, `event:${postId}:${JSON.stringify(full)}`);
 
   const [views, likes, participants] = await Promise.all([
-    prisma.postView
-      .findUniqueOrThrow({
+    prisma.$transaction(async (tx) => {
+      let post = await tx.postView.findUnique({
         select: { views: true },
         where: { postId },
-      })
-      .then(({ views }) => views),
+      });
+
+      if (!post) {
+        post = await tx.postView.create({ data: { postId } });
+      }
+
+      return post.views;
+    }),
     prisma.postLike.findMany({
       select: { userId: true, postId: true },
       where: { postId },
