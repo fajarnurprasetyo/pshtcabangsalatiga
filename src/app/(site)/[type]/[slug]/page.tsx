@@ -22,7 +22,11 @@ export async function generateMetadata({
 
   if (!post) return {};
 
-  const imageUrl = urlFor(post.image!).width(1200).url();
+  const ogImageUrl = urlFor(post.image!)
+    .width(1200)
+    .height(630)
+    .format("jpg")
+    .url();
 
   return {
     title: post.title!,
@@ -30,7 +34,7 @@ export async function generateMetadata({
     openGraph: {
       title: post.title!,
       description: post.description ?? undefined,
-      images: imageUrl,
+      images: ogImageUrl,
     },
   };
 }
