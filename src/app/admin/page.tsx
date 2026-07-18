@@ -9,7 +9,7 @@ export default async function AdminPage() {
           Admin Panel
         </h1>
         <HR className="my-2" />
-        <LinkButton href="/admin/data-cawar/">Data Cawar</LinkButton>
+        <LinkButton href="/admin/sanity-studio/">Sanity Studio</LinkButton>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
-import useDownloadCertificateModal from "@/hooks/modals/useDownloadCertificateModal";
+// import useDownloadCertificateModal from "@/hooks/modals/useDownloadCertificateModal";
+import { PostContent } from "@/components";
 import useSession from "@/hooks/useSession";
 import dayjs from "@/libs/dayjs";
 import { urlFor } from "@/sanity/image";
@@ -11,19 +12,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, usePathname, useRouter } from "next/navigation";
 import { use } from "react";
-import { CgSpinner } from "react-icons/cg";
-import {
-  FaCheck,
-  FaChevronRight,
-  FaDownload,
-  FaHouse,
-  FaRegCalendarCheck,
-  FaShare,
-  FaThumbsUp,
-  FaUserPlus,
-} from "react-icons/fa6";
+import { FaChevronRight, FaHouse, FaShare, FaThumbsUp } from "react-icons/fa6";
 import { useBoolean } from "react-use";
-import { joinEvent, updateLikePost, type Event } from "./actions";
+import { updateLikePost, type Event } from "./actions";
 import { useViewUpdater } from "./hooks";
 
 export type EventViewProps = PropsWithNullableSession<{
@@ -38,29 +29,29 @@ export default function EventView(props: EventViewProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { downloadCertificate } = useDownloadCertificateModal();
+  // const { downloadCertificate } = useDownloadCertificateModal();
 
   const [liked, setLiked] = useBoolean(false);
   const [likePending, setLikePending] = useBoolean(false);
 
-  const [joined, setJoined] = useBoolean(false);
-  const [joinPending, setJoinPending] = useBoolean(false);
+  // const [joined, setJoined] = useBoolean(false);
+  // const [joinPending, setJoinPending] = useBoolean(false);
 
-  const finishDate = dayjs.tz(event.finishDate ?? event.startDate);
-  const eventPassed =
-    finishDate.isValid() &&
-    (event.fullDay
-      ? dayjs.tz().startOf("day").isAfter(finishDate.startOf("day"))
-      : dayjs.tz().isAfter(finishDate));
+  // const finishDate = dayjs.tz(event.finishDate ?? event.startDate);
+  // const eventPassed =
+  //   finishDate.isValid() &&
+  //   (event.fullDay
+  //     ? dayjs.tz().startOf("day").isAfter(finishDate.startOf("day"))
+  //     : dayjs.tz().isAfter(finishDate));
 
   const { data: session } = useSession(props.session, {
     onSignIn({ user: { id } }) {
       setLiked(event.likes.some(({ userId }) => userId === id));
-      setJoined(event.participants.some(({ userId }) => userId === id));
+      // setJoined(event.participants.some(({ userId }) => userId === id));
     },
     onSignOut() {
       setLiked(false);
-      setJoined(false);
+      // setJoined(false);
     },
   });
 
@@ -84,24 +75,24 @@ export default function EventView(props: EventViewProps) {
     setLikePending(false);
   };
 
-  const handleJoin = async () => {
-    if (!session) {
-      signIn();
-      return;
-    }
+  // const handleJoin = async () => {
+  //   if (!session) {
+  //     signIn();
+  //     return;
+  //   }
 
-    if (joined || joinPending) return;
+  //   if (joined || joinPending) return;
 
-    setJoinPending(true);
+  //   setJoinPending(true);
 
-    const success = await joinEvent(event._id);
-    if (success) {
-      setJoined(true);
-      router.refresh();
-    }
+  //   const success = await joinEvent(event._id);
+  //   if (success) {
+  //     setJoined(true);
+  //     router.refresh();
+  //   }
 
-    setJoinPending(false);
-  };
+  //   setJoinPending(false);
+  // };
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
@@ -152,16 +143,16 @@ export default function EventView(props: EventViewProps) {
 
       {event.image && (
         <Image
-          width={1920}
-          height={1080}
+          width={1200}
+          height={630}
           loading="eager"
-          className="rounded-md w-full aspect-video"
+          className="rounded-md w-full aspect-1.91/1"
           alt={`Foto ${event.title}`}
           src={urlFor(event.image).url()}
         />
       )}
 
-      <div className="flex sm:flex-row flex-col justify-between items-center md:items-start gap-2 md:gap-0">
+      {/* <div className="flex sm:flex-row flex-col justify-between items-center md:items-start gap-2 md:gap-0">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <FaRegCalendarCheck />
@@ -198,6 +189,12 @@ export default function EventView(props: EventViewProps) {
             Unduh Sertifikat
           </Button>
         )}
+      </div> */}
+
+      <div>
+        {event.content?.map((props) => (
+          <PostContent key={props._key} {...props} />
+        ))}
       </div>
     </div>
   );

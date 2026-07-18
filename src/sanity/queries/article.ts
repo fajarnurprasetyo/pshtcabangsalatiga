@@ -12,7 +12,8 @@ const ArticleQuery = groq`
   title,
   slug,
   date,
-  image
+  image,
+  description
 }
 `;
 
@@ -24,6 +25,7 @@ const ArticleQueryFull = groq`
   slug,
   date,
   image,
+  description,
   content
 }
 `;
